@@ -10,7 +10,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public UserEntity findUserByEmail(String email) {
+    public User findUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 }
