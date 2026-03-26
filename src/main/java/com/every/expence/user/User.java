@@ -10,6 +10,17 @@ public class User {
     private String email;
     private String passwordHash;
 
+    public User(String email, String passwordHash) {
+        this.email = email;
+        this.passwordHash = passwordHash;
+    }
+
+    public User(String id, String email, String passwordHash) {
+        this.id = id;
+        this.email = email;
+        this.passwordHash = passwordHash;
+    }
+
     public String getId() {
         return id;
     }

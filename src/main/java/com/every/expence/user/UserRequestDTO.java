@@ -1,4 +1,7 @@
 package com.every.expence.user;
 
-public class UserRequestDTO {
+public record UserRequestDTO(String email, String password) {
+    public User toEntity() {
+        return new User(email, password);
+    }
 }
