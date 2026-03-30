@@ -2,7 +2,6 @@ spring:
   application:
     name: expense
 
-  data:
-    mongodb:
-      uri: mongodb://root:some_secret_password@localhost:27017/
-      database: db
+  mongodb:
+    uri: mongodb://root:some_secret_password@localhost:27017/
+    database: db
