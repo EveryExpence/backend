@@ -5,3 +5,7 @@ spring:
   mongodb:
     uri: mongodb://root:some_secret_password@localhost:27017/
     database: db
+
+  data:
+    mongodb:
+      auto-index-creation: true

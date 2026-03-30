@@ -16,6 +16,7 @@ public class UserController {
 
     @PostMapping("/register")
     public UserResponseDTO registerUser(@RequestBody UserRequestDTO userRequestDTO) {
+        // TODO: add email/password validity checks
         User registeredUser = userService.registerUser(userRequestDTO);
         return UserResponseDTO.fromEntity(registeredUser);
     }
