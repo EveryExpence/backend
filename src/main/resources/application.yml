@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: expense
+
+  mongodb:
+    uri: mongodb://root:some_secret_password@localhost:27017/
+    database: db
