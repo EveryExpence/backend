@@ -9,3 +9,15 @@ spring:
   data:
     mongodb:
       auto-index-creation: true
+
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: health
+  health:
+    mongodb:
+      enabled: true
