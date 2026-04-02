@@ -1,4 +1,4 @@
-package com.every.expence.auth;
+package com.every.expence.auth.dto;
 
 public record LoginRequestDTO(String email, String password) {
 }
