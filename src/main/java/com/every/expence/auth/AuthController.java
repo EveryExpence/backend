@@ -30,6 +30,8 @@ public class AuthController {
 
     @PostMapping("/login")
     public LoginResponseDTO login(@RequestBody LoginRequestDTO loginRequestDTO) {
+        // NOTE: in a mobile app the refreshToken should be stored in an encrypted storage
+        // Consider https://www.npmjs.com/package/react-native-encrypted-storage
         return authService.login(loginRequestDTO);
     }
 
