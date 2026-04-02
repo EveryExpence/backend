@@ -6,8 +6,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Calendar;
-import java.util.Date;
 
 @Service
 public class JwtService {
@@ -19,40 +17,37 @@ public class JwtService {
     private final String ISSUER = "EveryExpense";
 
     // TODO: save user id as a claim
-    public String generateToken(String email) {
-        Instant expirationTime = Instant.now().plus(ACCESS_TOKEN_EXPIRATION_TIME);
-        return JWT.create()
-                .withIssuer(ISSUER)
-                .withClaim("email", email)
-                .withExpiresAt(expirationTime)
-                .sign(Algorithm.HMAC256(ACCESS_TOKEN_SECRET));
+    public String generateAccessToken(String email) {
+        return generateToken(email, ACCESS_TOKEN_SECRET, ACCESS_TOKEN_EXPIRATION_TIME);
     }
 
     public String generateRefreshToken(String email) {
-        // TODO: refactor to follow the DRY principle
-        Instant expirationTime = Instant.now().plus(REFRESH_TOKEN_EXPIRATION_TIME);
+        return generateToken(email, REFRESH_TOKEN_SECRET, REFRESH_TOKEN_EXPIRATION_TIME);
+    }
+
+    private String generateToken(String email, String secret, Duration ttl) {
+        Instant expirationTime = Instant.now().plus(ttl);
         return JWT.create()
                 .withIssuer(ISSUER)
                 .withClaim("email", email)
                 .withExpiresAt(expirationTime)
-                .sign(Algorithm.HMAC256(REFRESH_TOKEN_SECRET));
+                .sign(Algorithm.HMAC256(secret));
     }
 
-    public String extractEmail(String token) {
-        return JWT.require(Algorithm.HMAC256(ACCESS_TOKEN_SECRET))
+    private String extractEmail(String token, String secret) {
+        return JWT.require(Algorithm.HMAC256(secret))
                 .build()
                 .verify(token)
                 .getClaim("email")
                 .asString();
     }
 
+    public String extractEmailFromAccessToken(String accessToken) {
+        return extractEmail(accessToken, ACCESS_TOKEN_SECRET);
+    }
+
     public String generateTokenFromRefreshToken(String refreshToken) {
-        // TODO: refactor to follow the DRY principle
-        String email = JWT.require(Algorithm.HMAC256(REFRESH_TOKEN_SECRET))
-                .build()
-                .verify(refreshToken)
-                .getClaim("email")
-                .asString();
-        return generateToken(email);
+        String email = extractEmail(refreshToken, REFRESH_TOKEN_SECRET);
+        return generateAccessToken(email);
     }
 }

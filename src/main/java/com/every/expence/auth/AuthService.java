@@ -24,7 +24,7 @@ public class AuthService {
                         loginRequestDTO.password()
                 )
         );
-        String accessToken = jwtService.generateToken(loginRequestDTO.email());
+        String accessToken = jwtService.generateAccessToken(loginRequestDTO.email());
         String refreshToken = jwtService.generateRefreshToken(loginRequestDTO.email());
         return new LoginResponseDTO(accessToken, refreshToken);
     }
