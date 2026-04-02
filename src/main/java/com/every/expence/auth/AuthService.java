@@ -14,14 +14,14 @@ public class AuthService {
         this.jwtService = jwtService;
     }
 
-    public String login(AuthRequest authRequest) {
+    public String login(LoginRequestDTO loginRequestDTO) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        authRequest.email(),
-                        authRequest.password()
+                        loginRequestDTO.email(),
+                        loginRequestDTO.password()
                 )
         );
-        return jwtService.generateToken(authRequest.email());
+        return jwtService.generateToken(loginRequestDTO.email());
     }
 
     public String refresh(RefreshRequestDTO refreshRequestDTO) {
