@@ -30,6 +30,11 @@ public class AuthController {
         return authService.login(authRequest);
     }
 
+    @PostMapping("/refresh")
+    public String refreshToken(@RequestBody RefreshRequestDTO refreshRequestDTO) {
+        return authService.refresh(refreshRequestDTO);
+    }
+
     @GetMapping("/welcome")
     public String welcome(@AuthenticationPrincipal User user) {
         return "Welcome, " + user.getEmail();

@@ -14,7 +14,6 @@ public class AuthService {
         this.jwtService = jwtService;
     }
 
-
     public String login(AuthRequest authRequest) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -23,5 +22,9 @@ public class AuthService {
                 )
         );
         return jwtService.generateToken(authRequest.email());
+    }
+
+    public String refresh(RefreshRequestDTO refreshRequestDTO) {
+        return jwtService.generateTokenFromRefreshToken(refreshRequestDTO.refreshToken());
     }
 }
