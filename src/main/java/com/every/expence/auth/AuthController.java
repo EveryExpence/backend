@@ -1,6 +1,7 @@
 package com.every.expence.auth;
 
 import com.every.expence.auth.dto.LoginRequestDTO;
+import com.every.expence.auth.dto.LoginResponseDTO;
 import com.every.expence.auth.dto.RefreshRequestDTO;
 import com.every.expence.user.User;
 import com.every.expence.user.UserRequestDTO;
@@ -28,7 +29,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequestDTO loginRequestDTO) {
+    public LoginResponseDTO login(@RequestBody LoginRequestDTO loginRequestDTO) {
         return authService.login(loginRequestDTO);
     }
 

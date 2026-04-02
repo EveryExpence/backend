@@ -1,6 +1,7 @@
 package com.every.expence.auth;
 
 import com.every.expence.auth.dto.LoginRequestDTO;
+import com.every.expence.auth.dto.LoginResponseDTO;
 import com.every.expence.auth.dto.RefreshRequestDTO;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,14 +17,16 @@ public class AuthService {
         this.jwtService = jwtService;
     }
 
-    public String login(LoginRequestDTO loginRequestDTO) {
+    public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequestDTO.email(),
                         loginRequestDTO.password()
                 )
         );
-        return jwtService.generateToken(loginRequestDTO.email());
+        String accessToken = jwtService.generateToken(loginRequestDTO.email());
+        String refreshToken = jwtService.generateRefreshToken(loginRequestDTO.email());
+        return new LoginResponseDTO(accessToken, refreshToken);
     }
 
     public String refresh(RefreshRequestDTO refreshRequestDTO) {
