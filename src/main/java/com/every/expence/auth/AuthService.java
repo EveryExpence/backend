@@ -2,6 +2,7 @@ package com.every.expence.auth;
 
 import com.every.expence.auth.dto.LoginRequestDTO;
 import com.every.expence.auth.dto.LoginResponseDTO;
+import com.every.expence.auth.dto.LogoutRequestDTO;
 import com.every.expence.auth.dto.RefreshRequestDTO;
 import com.every.expence.refreshToken.RefreshTokenService;
 import com.every.expence.user.User;
@@ -42,10 +43,20 @@ public class AuthService {
     }
 
     public String refresh(RefreshRequestDTO refreshRequestDTO) {
-        String userId = refreshTokenService.getUserIdFromRefreshToken(refreshRequestDTO.refreshToken());
-        if (userId == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-        }
+        String userId = refreshTokenService
+            .getUserIdFromRefreshToken(refreshRequestDTO.refreshToken())
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
         return jwtService.generateAccessToken(userId);
+    }
+
+    public void logout(LogoutRequestDTO logoutRequestDTO, User user) {
+        String refreshTokenString = logoutRequestDTO.refreshToken();
+        String userId = refreshTokenService
+            .getUserIdFromRefreshToken(refreshTokenString)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
+        if (!userId.equals(user.getId())) {
+            new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
+        refreshTokenService.revokeRefreshToken(refreshTokenString);
     }
 }

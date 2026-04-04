@@ -6,6 +6,7 @@ import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Base64;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -34,13 +35,13 @@ public class RefreshTokenService {
         refreshTokenRepository.save(refreshToken);
     }
 
-    public String getUserIdFromRefreshToken(String refreshTokenString) {
+    public Optional<String> getUserIdFromRefreshToken(String refreshTokenString) {
         String tokenHash = hashToken(refreshTokenString);
         RefreshToken refreshToken = refreshTokenRepository.findById(tokenHash).orElse(null);
         if (refreshToken == null) {
-            return null;
+            return Optional.empty();
         }
-        return refreshToken.getUserId();
+        return Optional.of(refreshToken.getUserId());
     }
 
     public void revokeRefreshToken(String refreshTokenString) {

@@ -2,6 +2,7 @@ package com.every.expence.auth;
 
 import com.every.expence.auth.dto.LoginRequestDTO;
 import com.every.expence.auth.dto.LoginResponseDTO;
+import com.every.expence.auth.dto.LogoutRequestDTO;
 import com.every.expence.auth.dto.RefreshRequestDTO;
 import com.every.expence.user.User;
 import com.every.expence.user.UserRequestDTO;
@@ -9,6 +10,7 @@ import com.every.expence.user.UserResponseDTO;
 import com.every.expence.user.UserService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -44,4 +46,10 @@ public class AuthController {
     public String welcome(@AuthenticationPrincipal User user) {
         return "Welcome, " + user.getEmail();
     }
+
+    @PostMapping("/logout")
+    public void logout(@RequestBody LogoutRequestDTO logoutRequestDTO, @AuthenticationPrincipal User user) {
+        authService.logout(logoutRequestDTO, user);
+    }
+    
 }
