@@ -34,6 +34,15 @@ public class RefreshTokenService {
         refreshTokenRepository.save(refreshToken);
     }
 
+    public String getUserIdFromRefreshToken(String refreshTokenString) {
+        String tokenHash = hashToken(refreshTokenString);
+        RefreshToken refreshToken = refreshTokenRepository.findById(tokenHash).orElse(null);
+        if (refreshToken == null) {
+            return null;
+        }
+        return refreshToken.getUserId();
+    }
+
     public void revokeRefreshToken(String refreshTokenString) {
         String tokenHash = hashToken(refreshTokenString);
         refreshTokenRepository.deleteById(tokenHash);

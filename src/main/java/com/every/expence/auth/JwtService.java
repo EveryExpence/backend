@@ -13,21 +13,20 @@ public class JwtService {
     private final Duration ACCESS_TOKEN_EXPIRATION_TIME = Duration.ofMinutes(15);
     private final String ISSUER = "EveryExpense";
 
-    // TODO: save user id as a claim
-    public String generateAccessToken(String email) {
+    public String generateAccessToken(String userId) {
         Instant expirationTime = Instant.now().plus(ACCESS_TOKEN_EXPIRATION_TIME);
         return JWT.create()
                 .withIssuer(ISSUER)
-                .withClaim("email", email)
+                .withClaim("userId", userId)
                 .withExpiresAt(expirationTime)
                 .sign(Algorithm.HMAC256(ACCESS_TOKEN_SECRET));
     }
 
-    public String extractEmailFromAccessToken(String accessToken) {
+    public String extractUserIdFromAccessToken(String accessToken) {
         return JWT.require(Algorithm.HMAC256(ACCESS_TOKEN_SECRET))
                 .build()
                 .verify(accessToken)
-                .getClaim("email")
+                .getClaim("userId")
                 .asString();
     }
 }

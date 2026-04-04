@@ -3,36 +3,49 @@ package com.every.expence.auth;
 import com.every.expence.auth.dto.LoginRequestDTO;
 import com.every.expence.auth.dto.LoginResponseDTO;
 import com.every.expence.auth.dto.RefreshRequestDTO;
+import com.every.expence.refreshToken.RefreshTokenService;
+import com.every.expence.user.User;
 
-import org.apache.commons.lang3.NotImplementedException;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final RefreshTokenService refreshTokenService;
 
-    public AuthService(AuthenticationManager authenticationManager, JwtService jwtService) {
+    public AuthService(AuthenticationManager authenticationManager, JwtService jwtService, RefreshTokenService refreshTokenService) {
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
+        this.refreshTokenService = refreshTokenService;
     }
 
     public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) {
-        authenticationManager.authenticate(
+        Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequestDTO.email(),
                         loginRequestDTO.password()
                 )
         );
+        User user = (User) authentication.getPrincipal();
+
         String accessToken = jwtService.generateAccessToken(loginRequestDTO.email());
-        // TODO: generate the refresh token as an opaque token, rathen than a jwt token
-        return new LoginResponseDTO(accessToken, "");
+        String refreshTokenString = refreshTokenService.generateRefreshTokenString();
+        refreshTokenService.saveRefreshToken(user.getId(), refreshTokenString);
+
+        return new LoginResponseDTO(accessToken, refreshTokenString);
     }
 
     public String refresh(RefreshRequestDTO refreshRequestDTO) {
-        // TODO: check refresh token hash. If not expired, then generate a new access token
-        throw new NotImplementedException();
+        String userId = refreshTokenService.getUserIdFromRefreshToken(refreshRequestDTO.refreshToken());
+        if (userId == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
+        return jwtService.generateAccessToken(userId);
     }
 }
