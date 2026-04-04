@@ -3,6 +3,8 @@ package com.every.expence.auth;
 import com.every.expence.auth.dto.LoginRequestDTO;
 import com.every.expence.auth.dto.LoginResponseDTO;
 import com.every.expence.auth.dto.RefreshRequestDTO;
+
+import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
@@ -25,11 +27,12 @@ public class AuthService {
                 )
         );
         String accessToken = jwtService.generateAccessToken(loginRequestDTO.email());
-        String refreshToken = jwtService.generateRefreshToken(loginRequestDTO.email());
-        return new LoginResponseDTO(accessToken, refreshToken);
+        // TODO: generate the refresh token as an opaque token, rathen than a jwt token
+        return new LoginResponseDTO(accessToken, "");
     }
 
     public String refresh(RefreshRequestDTO refreshRequestDTO) {
-        return jwtService.generateTokenFromRefreshToken(refreshRequestDTO.refreshToken());
+        // TODO: check refresh token hash. If not expired, then generate a new access token
+        throw new NotImplementedException();
     }
 }
