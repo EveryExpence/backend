@@ -3,6 +3,8 @@ package com.every.expence.user;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.every.expence.user.dto.UserRequestDTO;
+
 @Service
 public class UserService {
     private final UserRepository userRepository;

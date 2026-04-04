@@ -4,7 +4,8 @@ import com.every.expence.auth.dto.LoginRequestDTO;
 import com.every.expence.auth.dto.LoginResponseDTO;
 import com.every.expence.auth.dto.LogoutRequestDTO;
 import com.every.expence.auth.dto.RefreshRequestDTO;
-import com.every.expence.refreshToken.RefreshTokenService;
+import com.every.expence.auth.jwt.JwtService;
+import com.every.expence.auth.refreshToken.RefreshTokenService;
 import com.every.expence.user.User;
 
 import org.springframework.http.HttpStatus;
@@ -35,7 +36,7 @@ public class AuthService {
         );
         User user = (User) authentication.getPrincipal();
 
-        String accessToken = jwtService.generateAccessToken(loginRequestDTO.email());
+        String accessToken = jwtService.generateAccessToken(user.getId());
         String refreshTokenString = refreshTokenService.generateRefreshTokenString();
         refreshTokenService.saveRefreshToken(user.getId(), refreshTokenString);
 

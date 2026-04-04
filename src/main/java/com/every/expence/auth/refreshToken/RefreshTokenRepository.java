@@ -1,4 +1,4 @@
-package com.every.expence.refreshToken;
+package com.every.expence.auth.refreshToken;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 

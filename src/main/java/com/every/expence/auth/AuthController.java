@@ -5,9 +5,10 @@ import com.every.expence.auth.dto.LoginResponseDTO;
 import com.every.expence.auth.dto.LogoutRequestDTO;
 import com.every.expence.auth.dto.RefreshRequestDTO;
 import com.every.expence.user.User;
-import com.every.expence.user.UserRequestDTO;
-import com.every.expence.user.UserResponseDTO;
 import com.every.expence.user.UserService;
+import com.every.expence.user.dto.UserRequestDTO;
+import com.every.expence.user.dto.UserResponseDTO;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
