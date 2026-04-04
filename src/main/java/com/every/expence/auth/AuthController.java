@@ -29,8 +29,11 @@ public class AuthController {
 
     @PostMapping("/login")
     public LoginResponseDTO login(@RequestBody LoginRequestDTO loginRequestDTO) {
+        // TODO: add request limiter (right now anyone can fill up our database with refreshTokens)
+        
         // NOTE: in a mobile app the refreshToken should be stored in an encrypted storage
         // Consider https://www.npmjs.com/package/react-native-encrypted-storage
+        
         return authService.login(loginRequestDTO);
     }
 
