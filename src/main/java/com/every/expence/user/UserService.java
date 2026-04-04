@@ -3,8 +3,6 @@ package com.every.expence.user;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.every.expence.user.dto.UserRequestDTO;
-
 @Service
 public class UserService {
     private final UserRepository userRepository;
@@ -15,9 +13,9 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User registerUser(UserRequestDTO userRequestDTO) {
-        User user = userRequestDTO.toEntity();
-        user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));
+    public User addUser(String email, String password) {
+        String passwordHash = passwordEncoder.encode(password);
+        User user = new User(email, passwordHash);
         return userRepository.save(user);
     }
 }

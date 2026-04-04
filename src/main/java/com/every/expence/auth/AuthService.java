@@ -4,9 +4,11 @@ import com.every.expence.auth.dto.LoginRequestDTO;
 import com.every.expence.auth.dto.LoginResponseDTO;
 import com.every.expence.auth.dto.LogoutRequestDTO;
 import com.every.expence.auth.dto.RefreshRequestDTO;
+import com.every.expence.auth.dto.RegistrationRequestDTO;
 import com.every.expence.auth.jwt.JwtService;
 import com.every.expence.auth.refreshToken.RefreshTokenService;
 import com.every.expence.user.User;
+import com.every.expence.user.UserService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,11 +22,20 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
+    private final UserService userService;
 
-    public AuthService(AuthenticationManager authenticationManager, JwtService jwtService, RefreshTokenService refreshTokenService) {
+    public AuthService(AuthenticationManager authenticationManager, JwtService jwtService, RefreshTokenService refreshTokenService, UserService userService) {
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
         this.refreshTokenService = refreshTokenService;
+        this.userService = userService;
+    }
+
+    public String register(RegistrationRequestDTO registrationRequestDTO) {
+        return userService.addUser(
+            registrationRequestDTO.email(),
+            registrationRequestDTO.password()
+        ).getEmail();
     }
 
     public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) {

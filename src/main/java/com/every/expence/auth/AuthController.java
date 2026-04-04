@@ -4,10 +4,10 @@ import com.every.expence.auth.dto.LoginRequestDTO;
 import com.every.expence.auth.dto.LoginResponseDTO;
 import com.every.expence.auth.dto.LogoutRequestDTO;
 import com.every.expence.auth.dto.RefreshRequestDTO;
+import com.every.expence.auth.dto.RegistrationRequestDTO;
 import com.every.expence.user.User;
-import com.every.expence.user.UserService;
-import com.every.expence.user.dto.UserRequestDTO;
-import com.every.expence.user.dto.UserResponseDTO;
+
+import jakarta.validation.Valid;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -17,18 +17,14 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/auth")
 public class AuthController {
     private final AuthService authService;
-    private final UserService userService;
 
-    public AuthController(AuthService authService, UserService userService) {
+    public AuthController(AuthService authService) {
         this.authService = authService;
-        this.userService = userService;
     }
 
     @PostMapping("/register")
-    public UserResponseDTO registerUser(@RequestBody UserRequestDTO userRequestDTO) {
-        // TODO: add email/password validity checks
-        User registeredUser = userService.registerUser(userRequestDTO);
-        return UserResponseDTO.fromEntity(registeredUser);
+    public String registerUser(@Valid @RequestBody RegistrationRequestDTO registrationRequestDTO) {
+        return authService.register(registrationRequestDTO);
     }
 
     @PostMapping("/login")
