@@ -48,8 +48,8 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public void logout(@RequestBody LogoutRequestDTO logoutRequestDTO, @AuthenticationPrincipal User user) {
-        authService.logout(logoutRequestDTO, user);
+    public void logout(@RequestBody LogoutRequestDTO logoutRequestDTO) {
+        authService.logout(logoutRequestDTO);
     }
     
 }

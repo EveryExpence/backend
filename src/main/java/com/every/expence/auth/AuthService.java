@@ -49,14 +49,8 @@ public class AuthService {
         return jwtService.generateAccessToken(userId);
     }
 
-    public void logout(LogoutRequestDTO logoutRequestDTO, User user) {
+    public void logout(LogoutRequestDTO logoutRequestDTO) {
         String refreshTokenString = logoutRequestDTO.refreshToken();
-        String userId = refreshTokenService
-            .getUserIdFromRefreshToken(refreshTokenString)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
-        if (!userId.equals(user.getId())) {
-            new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-        }
         refreshTokenService.revokeRefreshToken(refreshTokenString);
     }
 }
