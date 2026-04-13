@@ -4,26 +4,27 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
 import java.time.Instant;
 
 @Service
 public class JwtService {
-    private final String ACCESS_TOKEN_SECRET = "something base64 encoded";
-    private final Duration ACCESS_TOKEN_EXPIRATION_TIME = Duration.ofMinutes(15);
-    private final String ISSUER = "EveryExpense";
+    private JwtConfig jwtConfig;
+
+    public JwtService(JwtConfig jwtConfig) {
+        this.jwtConfig = jwtConfig;
+    }
 
     public String generateAccessToken(String userId) {
-        Instant expirationTime = Instant.now().plus(ACCESS_TOKEN_EXPIRATION_TIME);
+        Instant expirationTime = Instant.now().plus(jwtConfig.getExpirationTime());
         return JWT.create()
-                .withIssuer(ISSUER)
+                .withIssuer(jwtConfig.getIssuer())
                 .withClaim("userId", userId)
                 .withExpiresAt(expirationTime)
-                .sign(Algorithm.HMAC256(ACCESS_TOKEN_SECRET));
+                .sign(Algorithm.HMAC256(jwtConfig.getSecret()));
     }
 
     public String extractUserIdFromAccessToken(String accessToken) {
-        return JWT.require(Algorithm.HMAC256(ACCESS_TOKEN_SECRET))
+        return JWT.require(Algorithm.HMAC256(jwtConfig.getSecret()))
                 .build()
                 .verify(accessToken)
                 .getClaim("userId")

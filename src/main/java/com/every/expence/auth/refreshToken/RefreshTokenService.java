@@ -3,7 +3,6 @@ package com.every.expence.auth.refreshToken;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.time.Duration;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.Optional;
@@ -12,13 +11,14 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class RefreshTokenService {
-    private static final Duration REFRESH_TOKEN_EXPIRATION_TIME = Duration.ofDays(30);
     private static final SecureRandom secureRandom = new SecureRandom();
     private static final Base64.Encoder encoder = Base64.getUrlEncoder().withoutPadding();
     private final RefreshTokenRepository refreshTokenRepository;
+    private final RefreshTokenConfig refreshTokenConfig;
 
-    public RefreshTokenService(RefreshTokenRepository refreshTokenRepository) {
+    public RefreshTokenService(RefreshTokenRepository refreshTokenRepository, RefreshTokenConfig refreshTokenConfig) {
         this.refreshTokenRepository = refreshTokenRepository;
+        this.refreshTokenConfig = refreshTokenConfig;
     }
 
     public String generateRefreshTokenString() {
@@ -29,7 +29,7 @@ public class RefreshTokenService {
 
     public void saveRefreshToken(String userId, String refreshTokenString) {
         String tokenHash = hashToken(refreshTokenString);
-        Instant expirationTime = Instant.now().plus(REFRESH_TOKEN_EXPIRATION_TIME);
+        Instant expirationTime = Instant.now().plus(refreshTokenConfig.getExpirationTime());
 
         RefreshToken refreshToken = new RefreshToken(tokenHash, userId, expirationTime);
         refreshTokenRepository.save(refreshToken);
