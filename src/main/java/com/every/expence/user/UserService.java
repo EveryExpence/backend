@@ -54,4 +54,20 @@ public class UserService {
         user.setPasswordHash(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }
+
+    public void changePublicUsername(User user, String publicUsername) {
+        if (publicUsername.equals(user.getPublicUsername())) {
+            return;
+        }
+
+        boolean takenByAnotherUser = userRepository.findByPublicUsername(publicUsername)
+                .filter(found -> !found.getId().equals(user.getId())).isPresent();
+
+        if (takenByAnotherUser) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Username is already in use");
+        }
+
+        user.setPublicUsername(publicUsername);
+        userRepository.save(user);
+    }
 }

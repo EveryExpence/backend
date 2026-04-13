@@ -18,6 +18,11 @@ public class User implements UserDetails {
     @Indexed(unique = true)
     private String email;
 
+    @Indexed(unique = true, sparse = true)
+    private String publicUsername;
+
+    private String avatarUrl;
+
     public User() {
     }
 
@@ -50,8 +55,24 @@ public class User implements UserDetails {
         return passwordHash;
     }
 
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public String getPublicUsername() {
+        return publicUsername;
+    }
+
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public void setPublicUsername(String publicUsername) {
+        this.publicUsername = publicUsername;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 
     @Override
