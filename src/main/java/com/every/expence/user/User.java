@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Document(collection = "users")
-public class User implements UserDetails  {
+public class User implements UserDetails {
     @Id
     private String id;
 
@@ -48,6 +48,10 @@ public class User implements UserDetails  {
 
     public String getPasswordHash() {
         return passwordHash;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @Override

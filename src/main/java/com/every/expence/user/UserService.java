@@ -1,7 +1,11 @@
 package com.every.expence.user;
 
+import java.util.Locale;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class UserService {
@@ -17,5 +21,24 @@ public class UserService {
         String passwordHash = passwordEncoder.encode(password);
         User user = new User(email, passwordHash);
         return userRepository.save(user);
+    }
+
+    public void changeEmail(User user, String email) {
+        String normalizedEmail = email.trim().toLowerCase(Locale.ROOT);
+        String normalizedCurrentEmail = user.getEmail().trim().toLowerCase(Locale.ROOT);
+
+        if (normalizedCurrentEmail.equals(normalizedEmail)) {
+            return;
+        }
+
+        boolean takenByAnotherUser = userRepository.findByEmail(normalizedEmail)
+                .filter(found -> !found.getId().equals(user.getId())).isPresent();
+
+        if (takenByAnotherUser) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already in use");
+        }
+
+        user.setEmail(normalizedEmail);
+        userRepository.save(user);
     }
 }
