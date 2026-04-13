@@ -25,7 +25,8 @@ public class UserController {
     }
 
     @PostMapping("/changeEmail")
-    public ResponseEntity<Void> changeEmail(@AuthenticationPrincipal User user,
+    public ResponseEntity<Void> changeEmail(
+            @AuthenticationPrincipal User user,
             @Valid @RequestBody ChangeEmailRequestDTO changeEmailRequestDTO) {
         userService.changeEmail(user, changeEmailRequestDTO.email());
 
@@ -33,7 +34,8 @@ public class UserController {
     }
 
     @PostMapping("/changePassword")
-    public ResponseEntity<Void> changePassword(@AuthenticationPrincipal User user,
+    public ResponseEntity<Void> changePassword(
+            @AuthenticationPrincipal User user,
             @Valid @RequestBody ChangePasswordRequestDTO changePasswordRequestDTO) {
         userService.changePassword(user, changePasswordRequestDTO.oldPassword(),
                 changePasswordRequestDTO.newPassword());
@@ -42,7 +44,8 @@ public class UserController {
     }
 
     @PostMapping("/changePublicUsername")
-    public ResponseEntity<Void> changeUsername(@AuthenticationPrincipal User user,
+    public ResponseEntity<Void> changeUsername(
+            @AuthenticationPrincipal User user,
             @Valid @RequestBody ChangePublicUsernameRequestDTO changePublicUsernameRequestDTO) {
         userService.changePublicUsername(user, changePublicUsernameRequestDTO.newPublicUsername());
 
@@ -50,7 +53,8 @@ public class UserController {
     }
 
     @PostMapping("/changeAvatar")
-    public ResponseEntity<Void> changeAvatar(@AuthenticationPrincipal User user,
+    public ResponseEntity<Void> changeAvatar(
+            @AuthenticationPrincipal User user,
             @Valid @RequestBody ChangeAvatarRequestDTO changeAvatarRequestDTO) {
         userService.changeAvatarUrl(user, changeAvatarRequestDTO.avatarUrl());
 
