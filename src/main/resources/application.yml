@@ -1,0 +1,26 @@
+spring:
+  profiles:
+    default: local
+
+  application:
+    name: expense
+
+  mongodb:
+    uri: mongodb://root:some_secret_password@mongo:27017/
+    database: db
+
+  data:
+    mongodb:
+      auto-index-creation: true
+
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: health
+  health:
+    mongodb:
+      enabled: true
