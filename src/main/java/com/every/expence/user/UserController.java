@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.every.expence.user.dto.ChangeEmailRequestDTO;
+import com.every.expence.user.dto.ChangePasswordRequestDTO;
 
 import jakarta.validation.Valid;
 
@@ -25,6 +26,15 @@ public class UserController {
     public ResponseEntity<Void> changeEmail(@AuthenticationPrincipal User user,
             @Valid @RequestBody ChangeEmailRequestDTO changeEmailRequestDTO) {
         userService.changeEmail(user, changeEmailRequestDTO.email());
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/changePassword")
+    public ResponseEntity<Void> changePassword(@AuthenticationPrincipal User user,
+            @Valid @RequestBody ChangePasswordRequestDTO changePasswordRequestDTO) {
+        userService.changePassword(user, changePasswordRequestDTO.oldPassword(),
+                changePasswordRequestDTO.newPassword());
 
         return ResponseEntity.noContent().build();
     }
