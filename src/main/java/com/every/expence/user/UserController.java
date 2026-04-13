@@ -3,6 +3,7 @@ package com.every.expence.user;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.every.expence.user.dto.ChangeAvatarRequestDTO;
 import com.every.expence.user.dto.ChangeEmailRequestDTO;
 import com.every.expence.user.dto.ChangePasswordRequestDTO;
 import com.every.expence.user.dto.ChangePublicUsernameRequestDTO;
@@ -44,6 +45,14 @@ public class UserController {
     public ResponseEntity<Void> changeUsername(@AuthenticationPrincipal User user,
             @Valid @RequestBody ChangePublicUsernameRequestDTO changePublicUsernameRequestDTO) {
         userService.changePublicUsername(user, changePublicUsernameRequestDTO.newPublicUsername());
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/changeAvatar")
+    public ResponseEntity<Void> changeAvatar(@AuthenticationPrincipal User user,
+            @Valid @RequestBody ChangeAvatarRequestDTO changeAvatarRequestDTO) {
+        userService.changeAvatarUrl(user, changeAvatarRequestDTO.avatarUrl());
 
         return ResponseEntity.noContent().build();
     }

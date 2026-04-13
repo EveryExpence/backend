@@ -70,4 +70,9 @@ public class UserService {
         user.setPublicUsername(publicUsername);
         userRepository.save(user);
     }
+
+    public void changeAvatarUrl(User user, String avatarUrl) {
+        user.setAvatarUrl(avatarUrl);
+        userRepository.save(user);
+    }
 }
