@@ -7,6 +7,7 @@ import com.every.expence.user.dto.ChangeAvatarRequestDTO;
 import com.every.expence.user.dto.ChangeEmailRequestDTO;
 import com.every.expence.user.dto.ChangePasswordRequestDTO;
 import com.every.expence.user.dto.ChangePublicUsernameRequestDTO;
+import com.every.expence.user.dto.GetUserDataDTO;
 
 import jakarta.validation.Valid;
 
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -22,6 +24,15 @@ public class UserController {
 
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    @GetMapping
+    public GetUserDataDTO getUserData(@AuthenticationPrincipal User user) {
+        return new GetUserDataDTO(
+            user.getEmail(),
+            user.getPublicUsername(),
+            user.getAvatarUrl()
+        );
     }
 
     @PostMapping("/changeEmail")
