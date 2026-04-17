@@ -13,6 +13,13 @@ spring:
     mongodb:
       auto-index-creation: true
 
+  mvc:
+    problemdetails:
+      enabled: true
+  web:
+    error:
+      include-stacktrace: never
+
 management:
   endpoint:
     health:
