@@ -9,7 +9,7 @@ public class Category {
     @Id
     private String id;
 
-    @Indexed(unique = true)
+    @Indexed(unique = false)
     private String userId;
 
     private String name;
@@ -34,6 +34,10 @@ public class Category {
         this.userId = userId;
         this.name = name;
         this.type = type;
+    }
+    
+    public Category() {
+        
     }
 
         public String getUserId() {
