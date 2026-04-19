@@ -15,8 +15,14 @@ public class PaymentMethodService {
     }
 
     public PaymentMethod addPaymentMethod(User user, String name) {
-        PaymentMethod paymentMethod = new PaymentMethod(user.getId(), name);
+        String normalizedName = name.trim();
 
+        boolean nameTaken = paymentMethodRepository.existsByUserIdAndName(user.getId(), normalizedName);
+        if (nameTaken) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Payment method name already in use");
+        }
+
+        PaymentMethod paymentMethod = new PaymentMethod(user.getId(), normalizedName);
         return paymentMethodRepository.save(paymentMethod);
     }
 

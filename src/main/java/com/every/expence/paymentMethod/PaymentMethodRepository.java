@@ -11,5 +11,4 @@ public interface PaymentMethodRepository extends MongoRepository<PaymentMethod, 
 
     long deleteByIdAndUserId(String id, String userId);
 
-    Optional<PaymentMethod> findByUserIdAndName(String userId, String name);
 }
