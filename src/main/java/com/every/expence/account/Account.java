@@ -3,6 +3,7 @@ package com.every.expence.account;
 import java.math.BigDecimal;
 import java.time.Instant;
 
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -21,6 +22,7 @@ public class Account {
 
     private BigDecimal balance;
 
+    @CreatedDate
     private Instant createdAt;
 
     public Account() {
@@ -31,7 +33,6 @@ public class Account {
         this.name = name;
         this.currency = currency;
         this.balance = balance;
-        this.createdAt = Instant.now();
     }
 
     public Account(String id, String ownerId, String name, String currency, BigDecimal balance) {
@@ -40,7 +41,6 @@ public class Account {
         this.name = name;
         this.currency = currency;
         this.balance = balance;
-        this.createdAt = Instant.now();
     }
 
     public String getId() {
@@ -83,7 +83,4 @@ public class Account {
         this.balance = balance;
     }
 
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
-    }
 }
