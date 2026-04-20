@@ -37,7 +37,7 @@ public class AccountController {
         return accountService.create(user, createAccountRequestDTO);
     }
 
-    @DeleteMapping("/account/{id}")
+    @DeleteMapping("/accounts/{id}")
     public ResponseEntity<Void> delete(
             @AuthenticationPrincipal User user,
             @PathVariable String id) {
