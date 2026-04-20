@@ -23,10 +23,6 @@ public class AccountService {
         String name = createAccountRequestDTO.name().trim();
         String currency = createAccountRequestDTO.currency().trim().toUpperCase(Locale.ROOT);
 
-        if (name.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name is required");
-        }
-
         Account account = new Account(
             user.getId(),
             name,
@@ -36,25 +32,13 @@ public class AccountService {
 
         Account saved = accountRepository.save(account);
 
-        return new AccountResponseDTO(
-            saved.getId(),
-            saved.getName(),
-            saved.getCurrency(),
-            saved.getBalance(),
-            saved.getCreatedAt()
-        );
+        return AccountResponseDTO.fromEntity(saved);
     }
 
     public List<AccountResponseDTO> getAll(User user) {
         return accountRepository.findAllByOwnerId(user.getId())
             .stream()
-            .map(account -> new AccountResponseDTO(
-                account.getId(),
-                account.getName(),
-                account.getCurrency(),
-                account.getBalance(),
-                account.getCreatedAt()
-            ))
+            .map(AccountResponseDTO::fromEntity)
             .toList();
     }
 
@@ -62,13 +46,7 @@ public class AccountService {
         Account account = accountRepository.findByIdAndOwnerId(accountId, user.getId())
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
 
-        return new AccountResponseDTO(
-            account.getId(),
-            account.getName(),
-            account.getCurrency(),
-            account.getBalance(),
-            account.getCreatedAt()
-        );
+        return AccountResponseDTO.fromEntity(account);
     }
 
     public void deleteById(User user, String accountId) {
