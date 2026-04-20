@@ -4,6 +4,7 @@ import com.every.expence.auth.dto.LoginRequestDTO;
 import com.every.expence.auth.dto.LoginResponseDTO;
 import com.every.expence.auth.dto.LogoutRequestDTO;
 import com.every.expence.auth.dto.RefreshRequestDTO;
+import com.every.expence.auth.dto.RefreshResponseDTO;
 import com.every.expence.auth.dto.RegistrationRequestDTO;
 import com.every.expence.auth.jwt.JwtService;
 import com.every.expence.auth.refreshToken.RefreshTokenService;
@@ -49,16 +50,21 @@ public class AuthService {
 
         String accessToken = jwtService.generateAccessToken(user.getId());
         String refreshTokenString = refreshTokenService.generateRefreshTokenString();
-        refreshTokenService.saveRefreshToken(user.getId(), refreshTokenString);
+        refreshTokenService.addRefreshToken(user.getId(), refreshTokenString);
 
         return new LoginResponseDTO(accessToken, refreshTokenString);
     }
 
-    public String refresh(RefreshRequestDTO refreshRequestDTO) {
+    public RefreshResponseDTO refresh(RefreshRequestDTO refreshRequestDTO) {
         String userId = refreshTokenService
             .getUserIdFromRefreshToken(refreshRequestDTO.refreshToken())
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
-        return jwtService.generateAccessToken(userId);
+
+        refreshTokenService.revokeRefreshToken(refreshRequestDTO.refreshToken());
+        String refreshToken = refreshTokenService.generateRefreshTokenString();
+        String accessToken = jwtService.generateAccessToken(userId);
+        refreshTokenService.addRefreshToken(userId, refreshToken);
+        return new RefreshResponseDTO(accessToken, refreshToken);
     }
 
     public void logout(LogoutRequestDTO logoutRequestDTO) {

@@ -27,7 +27,7 @@ public class RefreshTokenService {
         return encoder.encodeToString(bytes);
     }
 
-    public void saveRefreshToken(String userId, String refreshTokenString) {
+    public void addRefreshToken(String userId, String refreshTokenString) {
         String tokenHash = hashToken(refreshTokenString);
         Instant expirationTime = Instant.now().plus(refreshTokenConfig.getExpirationTime());
 
