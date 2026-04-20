@@ -1,16 +1,22 @@
 package com.every.expence.expenseRecord;
 
 import java.math.BigDecimal;
-import java.sql.Date;
-import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+@CompoundIndex(name = "idx_user_date", def = "{'userId': 1, 'date': 1}")
 @Document(collection = "expenseRecord")
 public class ExpenseRecord {
     @Id
     private String id;
+    @Indexed
+    private String userId;
     // TODO: Add after pr #15 will be merged
     // @Indexed(unique = true)
     // private PaymentMethod paymentMethod;
@@ -21,11 +27,12 @@ public class ExpenseRecord {
     // @Indexed(unique = true)
     // private Account accountId;
     private BigDecimal amount;
-    private Date date;
-    private Time time;
+    @Indexed
+    private LocalDate date;
+    private LocalTime time;
     private String location;
     private String description;
-    private String[] attachments;
+    private List<String> attachments;
 
     public ExpenseRecord() {
     }
@@ -38,6 +45,14 @@ public class ExpenseRecord {
         this.id = id;
     }
 
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
     public BigDecimal getAmount() {
         return amount;
     }
@@ -46,19 +61,19 @@ public class ExpenseRecord {
         this.amount = amount;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
-    public Time getTime() {
+    public LocalTime getTime() {
         return time;
     }
 
-    public void setTime(Time time) {
+    public void setTime(LocalTime time) {
         this.time = time;
     }
 
@@ -78,11 +93,11 @@ public class ExpenseRecord {
         this.description = description;
     }
 
-    public String[] getAttachments() {
+    public List<String> getAttachments() {
         return attachments;
     }
 
-    public void setAttachments(String[] attachments) {
+    public void setAttachments(List<String> attachments) {
         this.attachments = attachments;
     }
 
