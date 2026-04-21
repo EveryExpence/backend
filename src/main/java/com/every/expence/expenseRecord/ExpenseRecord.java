@@ -18,10 +18,8 @@ public class ExpenseRecord {
     @Indexed
     private String userId;
     // TODO: Add after pr #15 will be merged
-    // @Indexed(unique = true)
     // private PaymentMethod paymentMethod;
     // TODO: Add after category will be created and merged
-    // @Indexed(unique = true)
     // private Category category;
     @Indexed
     private String accountId;
