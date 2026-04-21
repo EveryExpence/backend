@@ -1,6 +1,7 @@
 package com.every.expence.category;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
@@ -17,12 +18,12 @@ public class CategoryService {
     }
 
     public Category addCategory(String userId, String name, String type){
-        categoryRepository.findByUserIdAndNameAndType(userId, name, type)
+        categoryRepository.findByUserIdAndNameAndType(userId, normalizeName(name), normalizeType(type))
             .ifPresent(c -> {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "Category already exists");
             });
 
-        Category category = new Category(userId, name, type);
+        Category category = new Category(userId, normalizeName(name), type);
 
         return categoryRepository.save(category);
     }
@@ -42,16 +43,21 @@ public class CategoryService {
     
 
     public Category updateCategory(String userId, String categoryId, String name, String type){
+        String normalizedName = normalizeName(name);
+        String normalizedType = normalizeType(type);
+
         Category currCategory = getById(userId, categoryId);
 
-        Optional<Category> duplicate = categoryRepository.findByUserIdAndNameAndTypeAndId(userId, name, type, categoryId);
+        Optional<Category> duplicate = 
+            categoryRepository.findByUserIdAndNameAndType(userId, normalizedName, normalizedType)
+            .filter(f -> !Objects.equals(f.getId(), categoryId));
 
         if(duplicate.isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Category already exists");
         }
 
-        currCategory.setName(normalizeName(name));
-        currCategory.setType(normalizeType(type));
+        currCategory.setName(normalizeName(normalizedName));
+        currCategory.setType(normalizeType(normalizedType));
 
         return categoryRepository.save(currCategory);
     }
