@@ -11,7 +11,6 @@ public interface ExpenseRecordRepository extends MongoRepository<ExpenseRecord, 
 
     Optional<ExpenseRecord> findByIdAndUserId(String id, String userId);
 
-    void deleteByIdAndUserId(String id, String userId);
 
     List<ExpenseRecord> findAllByUserIdOrderByDateDescTimeDesc(String userId);
 }
