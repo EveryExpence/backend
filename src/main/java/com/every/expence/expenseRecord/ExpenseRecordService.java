@@ -9,20 +9,30 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.every.expence.account.Account;
 import com.every.expence.account.AccountRepository;
+import com.every.expence.category.Category;
+import com.every.expence.category.CategoryRepository;
 import com.every.expence.expenseRecord.dto.CreateRequestDTO;
 import com.every.expence.expenseRecord.dto.ExpenseRecordResponseDTO;
+import com.every.expence.paymentMethod.PaymentMethod;
+import com.every.expence.paymentMethod.PaymentMethodRepository;
 import com.every.expence.user.User;
 
 @Service
 public class ExpenseRecordService {
     private final ExpenseRecordRepository expenseRecordRepository;
     private final AccountRepository accountRepository;
+    private final PaymentMethodRepository paymentMethodRepository;
+    private final CategoryRepository categoryRepository;
 
     public ExpenseRecordService(
             ExpenseRecordRepository expenseRecordRepository,
-            AccountRepository accountRepository) {
+            AccountRepository accountRepository,
+            PaymentMethodRepository paymentMethodRepository,
+            CategoryRepository categoryRepository) {
         this.expenseRecordRepository = expenseRecordRepository;
         this.accountRepository = accountRepository;
+        this.paymentMethodRepository = paymentMethodRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     public ExpenseRecordResponseDTO create(User user, CreateRequestDTO createRequestDTO) {
@@ -33,6 +43,14 @@ public class ExpenseRecordService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Account does not belong to user");
         }
 
+        PaymentMethod paymentMethod = paymentMethodRepository.findByIdAndUserId(createRequestDTO.paymentMethodId(), user.getId())
+            .or(() -> paymentMethodRepository.findByIdAndUserIdIsNull(createRequestDTO.paymentMethodId()))
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Payment method not found"));
+
+        Category category = categoryRepository.findByUserIdAndId(user.getId(), createRequestDTO.categoryId())
+            .or(() -> categoryRepository.findByIdAndUserIdIsNull(createRequestDTO.categoryId()))
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
+
         ExpenseRecord expenseRecord = new ExpenseRecord();
         expenseRecord.setUserId(user.getId());
         expenseRecord.setAmount(createRequestDTO.amount());
@@ -40,6 +58,8 @@ public class ExpenseRecordService {
         expenseRecord.setTime(createRequestDTO.time());
         expenseRecord.setLocation(createRequestDTO.location());
         expenseRecord.setAccountId(account.getId());
+        expenseRecord.setPaymentMethodId(paymentMethod.getId());
+        expenseRecord.setCategoryId(category.getId());
         expenseRecord.setDescription(createRequestDTO.description());
         expenseRecord.setAttachments(createRequestDTO.attachments());
 

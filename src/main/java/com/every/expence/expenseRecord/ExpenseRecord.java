@@ -15,12 +15,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class ExpenseRecord {
     @Id
     private String id;
-    @Indexed
+
     private String userId;
-    // TODO: Add after pr #15 will be merged
-    // private PaymentMethod paymentMethod;
-    // TODO: Add after category will be created and merged
-    // private Category category;
+
+    private String paymentMethodId;
+
+    private String categoryId;
+
     @Indexed
     private String accountId;
     private BigDecimal amount;
@@ -96,6 +97,22 @@ public class ExpenseRecord {
 
     public void setAttachments(List<String> attachments) {
         this.attachments = attachments;
+    }
+
+    public String getPaymentMethodId() {
+        return paymentMethodId;
+    }
+
+    public void setPaymentMethodId(String paymentMethodId) {
+        this.paymentMethodId = paymentMethodId;
+    }
+
+    public String getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
     }
 
     public String getAccountId() {

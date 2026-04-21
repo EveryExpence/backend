@@ -29,6 +29,12 @@ public record CreateRequestDTO(
                 @NotBlank(message = "AccountId is required")
                 String accountId,
 
+                @NotBlank(message = "Payment method id is required")
+                String paymentMethodId,
+
+                @NotBlank(message = "Category id is required")
+                String categoryId,
+
                 String description,
                 List<String> attachments) {
 

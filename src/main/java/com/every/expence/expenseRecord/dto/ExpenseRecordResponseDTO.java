@@ -16,6 +16,8 @@ public record ExpenseRecordResponseDTO(String id,
         LocalTime time,
         String location,
         String accountId,
+        String paymentMethodId,
+        String categoryId,
         String description,
         List<String> attachments) {
     public static ExpenseRecordResponseDTO fromEntity(ExpenseRecord expenseRecord) {
@@ -26,6 +28,8 @@ public record ExpenseRecordResponseDTO(String id,
                 expenseRecord.getTime(),
                 expenseRecord.getLocation(),
                 expenseRecord.getAccountId(),
+                expenseRecord.getPaymentMethodId(),
+                expenseRecord.getCategoryId(),
                 expenseRecord.getDescription(),
                 expenseRecord.getAttachments());
     }

@@ -11,6 +11,7 @@ public interface CategoryRepository extends MongoRepository<Category, String> {
     List<Category> findByUserIdAndType(String userId, String type);
 
     Optional<Category> findByUserIdAndId(String userId, String categoryId);
+    Optional<Category> findByIdAndUserIdIsNull(String categoryId);
     Optional<Category> findByUserIdAndNameAndType(String userId, String name, String type);
     Optional<Category> findByUserIdIsNullAndNameAndType(String name, String type);
     boolean existsByUserIdIsNullAndNameAndType(String name, String type);
