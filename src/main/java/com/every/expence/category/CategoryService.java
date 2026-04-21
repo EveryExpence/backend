@@ -34,6 +34,11 @@ public class CategoryService {
             .ifPresent(c -> {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "Category already exists");
             });
+        
+        categoryRepository.findByUserIdIsNullAndNameAndType(normalizedName, normalizedType)
+            .ifPresent(c ->{
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Category already exists");
+            });
 
         Category category = new Category(userId, normalizedName, normalizedType);
 
@@ -41,7 +46,7 @@ public class CategoryService {
     }
 
     public List<CategoryResponeDTO> getByUserId(String userId){
-        return categoryRepository.findByUserId(userId)
+        return categoryRepository.findAllVisibleForUser(userId)
             .stream()
             .map(CategoryResponeDTO::fromEntity)
             .toList();
@@ -50,7 +55,7 @@ public class CategoryService {
     public List<CategoryResponeDTO> getByUserIdAndType(String userId, String type){
         String normalizedType = normalizeType(type);
 
-        return categoryRepository.findByUserIdAndType(userId, normalizedType)
+        return categoryRepository.findAllVisibleForUserByType(userId, normalizedType)
             .stream()
             .map(CategoryResponeDTO::fromEntity)
             .toList();
@@ -75,6 +80,11 @@ public class CategoryService {
         if(duplicate.isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Category already exists");
         }
+
+        categoryRepository.findByUserIdIsNullAndNameAndType(normalizedName, normalizedType)
+            .ifPresent(c ->{
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Category already exists");
+            });
 
         currCategory.setName(normalizedName);
         currCategory.setType(normalizedType);

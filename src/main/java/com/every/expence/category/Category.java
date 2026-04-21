@@ -1,10 +1,15 @@
 package com.every.expence.category;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection="categories")
+@CompoundIndexes({
+    @CompoundIndex(name = "uniq_user_name_type", def = "{'userId': 1, 'name': 1, 'type': 1}", unique = true)
+})
 public class Category {
     @Id
     private String id;

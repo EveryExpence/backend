@@ -3,9 +3,11 @@ import java.util.*;
 
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.stereotype.Component;
 
 import com.mongodb.DuplicateKeyException;
 
+@Component
 public class CategoryDefaultsInitializer implements ApplicationRunner {
     private final CategoryRepository categoryRepository;
 
@@ -36,8 +38,9 @@ public class CategoryDefaultsInitializer implements ApplicationRunner {
     public void run(ApplicationArguments args){
         for(Category category : DEFAULT_CATEGORIES){
             try{
-                categoryRepository.save(category);
-            }catch(DuplicateKeyException ignored){}
+                boolean exists = categoryRepository.existsByUserIdIsNullAndNameAndType(category.getName(), category.getType());
+                if(!exists) categoryRepository.save(category);
+            }catch(DuplicateKeyException ignored) {}
         }
     }
 }
