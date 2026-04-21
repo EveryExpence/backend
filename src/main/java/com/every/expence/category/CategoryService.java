@@ -13,7 +13,12 @@ public class CategoryService {
     }
 
     public Category addCategory(String userId, String name, String type){
-        Category category = new Category(name, type);
+        categoryRepository.findByUserIdAndNameAndType(userId, name, type)
+            .ifPresent(c -> {
+                throw new RuntimeException("Category already exists");
+            });
+
+        Category category = new Category(userId, name, type);
         return categoryRepository.save(category);
     }
     
