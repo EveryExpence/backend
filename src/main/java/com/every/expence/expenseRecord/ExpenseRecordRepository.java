@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 public interface ExpenseRecordRepository extends MongoRepository<ExpenseRecord, String> {
     List<ExpenseRecord> findByUserIdAndDateGreaterThanEqualOrderByDateAscTimeAsc(String userId, LocalDate date);
 
-    Optional<ExpenseRecord> findByIdAndUserId(String id, String UserId);
+    Optional<ExpenseRecord> findByIdAndUserId(String id, String userId);
 
     void deleteByIdAndUserId(String id, String userId);
 

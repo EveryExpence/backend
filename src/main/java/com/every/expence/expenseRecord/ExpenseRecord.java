@@ -10,8 +10,6 @@ import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.every.expence.account.Account;
-
 @CompoundIndex(name = "idx_user_date", def = "{'userId': 1, 'date': 1}")
 @Document(collection = "expenseRecord")
 public class ExpenseRecord {
@@ -25,7 +23,8 @@ public class ExpenseRecord {
     // TODO: Add after category will be created and merged
     // @Indexed(unique = true)
     // private Category category;
-    private Account accountId;
+    @Indexed
+    private String accountId;
     private BigDecimal amount;
     @Indexed
     private LocalDate date;
@@ -101,11 +100,11 @@ public class ExpenseRecord {
         this.attachments = attachments;
     }
 
-    public Account getAccountId() {
+    public String getAccountId() {
         return accountId;
     }
 
-    public void setAccountId(Account accountId) {
+    public void setAccountId(String accountId) {
         this.accountId = accountId;
     }
 
