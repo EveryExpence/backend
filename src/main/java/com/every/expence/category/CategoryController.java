@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
@@ -36,7 +35,7 @@ public class CategoryController {
         @AuthenticationPrincipal User user,
         @Valid @RequestBody CreateCategoryRequestDTO createCategoryRequestDTO
     ){
-        CategoryResponeDTO currCategory = categoryService.addCategory(userIdFromPrincipal(user), createCategoryRequestDTO);
+        CategoryResponeDTO currCategory = categoryService.addCategory(user.getId(), createCategoryRequestDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(currCategory);
     }
@@ -46,7 +45,7 @@ public class CategoryController {
         @AuthenticationPrincipal User user,
         @Valid @RequestBody DeleteCategoryRequestDTO deleteCategoryRequestDTO
     ){
-        categoryService.deleteCategory(userIdFromPrincipal(user), deleteCategoryRequestDTO);
+        categoryService.deleteCategory(user.getId(), deleteCategoryRequestDTO);
 
         return ResponseEntity.noContent().build();
     }
@@ -56,7 +55,7 @@ public class CategoryController {
         @AuthenticationPrincipal User user,
         @Valid @RequestBody UpdateCategoryRequestDTO updateCategoryRequestDTO
     ){
-        return categoryService.updateCategory(userIdFromPrincipal(user), updateCategoryRequestDTO);
+        return categoryService.updateCategory(user.getId(), updateCategoryRequestDTO);
     }
 
 
@@ -65,15 +64,9 @@ public class CategoryController {
         @AuthenticationPrincipal User user,
         @RequestParam(required = false) String type
     ) {
-        String userId = userIdFromPrincipal(user);
+        String userId = user.getId();
         if(type == null || type.isBlank()) return categoryService.getByUserId(userId);
 
         return categoryService.getByUserIdAndType(userId, type);
-    }
-
-
-    private String userIdFromPrincipal(User user){
-        if(user == null || user.getId() == null || user.getId().isBlank()) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
-        return user.getId();
     }
 }
