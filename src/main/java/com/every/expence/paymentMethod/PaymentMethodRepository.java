@@ -14,4 +14,8 @@ public interface PaymentMethodRepository extends MongoRepository<PaymentMethod, 
 
     List<PaymentMethod> findByUserIdOrUserIdIsNullOrderByNameAsc(String userId);
 
+    boolean existsByUserIdIsNullAndName(String name);
+
+    Optional<PaymentMethod> findByUserIdIsNullAndName(String name);
+
 }
