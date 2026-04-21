@@ -10,6 +10,8 @@ import com.every.expence.user.User;
 
 import jakarta.validation.Valid;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -74,4 +76,11 @@ public class PaymentMethodController {
                 renamePaymentMethodRequestDTO.newName());
         return new PaymentMethodResponseDTO(paymentMethod.getId(), paymentMethod.getName());
     }
+
+    @GetMapping("/getAll")
+    public List<PaymentMethodResponseDTO> getMethodName(@AuthenticationPrincipal
+    User user) {
+        return paymentMethodService.getAllPaymentMethods(user);
+    }
+
 }

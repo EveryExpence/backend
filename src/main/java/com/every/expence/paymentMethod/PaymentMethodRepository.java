@@ -1,5 +1,6 @@
 package com.every.expence.paymentMethod;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -10,5 +11,7 @@ public interface PaymentMethodRepository extends MongoRepository<PaymentMethod, 
     boolean existsByUserIdAndName(String userId, String name);
 
     long deleteByIdAndUserId(String id, String userId);
+
+    List<PaymentMethod> findByUserIdOrUserIdIsNullOrderByNameAsc(String userId);
 
 }

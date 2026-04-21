@@ -1,9 +1,12 @@
 package com.every.expence.paymentMethod;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.every.expence.paymentMethod.dto.PaymentMethodResponseDTO;
 import com.every.expence.user.User;
 
 @Service
@@ -56,5 +59,15 @@ public class PaymentMethodService {
 
         paymentMethod.setName(normalizedNewName);
         return paymentMethodRepository.save(paymentMethod);
+    }
+
+    public List<PaymentMethodResponseDTO> getAllPaymentMethods(User user) {
+        return paymentMethodRepository
+                .findByUserIdOrUserIdIsNullOrderByNameAsc(user.getId())
+                .stream()
+                .map(paymentMethod -> new PaymentMethodResponseDTO(
+                        paymentMethod.getId(),
+                        paymentMethod.getName()))
+                .toList();
     }
 }
