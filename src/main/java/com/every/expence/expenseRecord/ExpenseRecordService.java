@@ -33,10 +33,10 @@ public class ExpenseRecordService {
     }
 
     public ExpenseRecordResponseDTO getById(User user, String id) {
-    return expenseRecordRepository.findByIdAndUserId(id, user.getId())
-            .map(ExpenseRecordResponseDTO::fromEntity)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Record not found"));
-}
+        return expenseRecordRepository.findByIdAndUserId(id, user.getId())
+                .map(ExpenseRecordResponseDTO::fromEntity)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Record not found"));
+    }
 
     public List<ExpenseRecordResponseDTO> getAll(User user) {
         return expenseRecordRepository.findAllByUserIdOrderByDateDescTimeDesc(user.getId())
@@ -46,7 +46,7 @@ public class ExpenseRecordService {
     }
 
     public List<ExpenseRecordResponseDTO> getAfter(User user, LocalDate date) {
-        return expenseRecordRepository.findByUserIdAndDateAfterOrderByDateAscTimeAsc(user.getId(), date)
+        return expenseRecordRepository.findByUserIdAndDateGreaterThanEqualOrderByDateAscTimeAsc(user.getId(), date)
                 .stream()
                 .map(ExpenseRecordResponseDTO::fromEntity)
                 .toList();

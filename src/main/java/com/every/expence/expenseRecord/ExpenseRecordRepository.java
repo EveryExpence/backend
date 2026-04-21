@@ -7,7 +7,7 @@ import java.util.Optional;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface ExpenseRecordRepository extends MongoRepository<ExpenseRecord, String> {
-    List<ExpenseRecord> findByUserIdAndDateAfterOrderByDateAscTimeAsc(String userId, LocalDate date);
+    List<ExpenseRecord> findByUserIdAndDateGreaterThanEqualOrderByDateAscTimeAsc(String userId, LocalDate date);
 
     Optional<ExpenseRecord> findByIdAndUserId(String id, String UserId);
 
