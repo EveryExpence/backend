@@ -1,9 +1,24 @@
 package com.every.expence.expenseRecord;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.every.expence.expenseRecord.dto.GetAfterRequestDTO;
+import com.every.expence.expenseRecord.dto.CreateRequestDTO;
+import com.every.expence.expenseRecord.dto.ExpenseRecordResponseDTO;
+import com.every.expence.user.User;
+
+import jakarta.validation.Valid;
+
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/api/v1/expenseRecord")
@@ -14,10 +29,30 @@ public class ExpenseRecordController {
         this.expenseRecordService = expenseRecordService;
     }
 
-    @GetMapping
-    public String getMethodName(@RequestParam
-    String param) {
-        return new String();
+    @GetMapping("/{id}")
+    public ExpenseRecordResponseDTO getById(@AuthenticationPrincipal
+    User user, @PathVariable
+    String id) {
+        return expenseRecordService.getById(user, id);
+    }
+
+    @PostMapping("/create")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ExpenseRecordResponseDTO create(@AuthenticationPrincipal
+    User user, @Valid
+    @RequestBody
+    CreateRequestDTO createRequestDTO) {
+        return expenseRecordService.create(user, createRequestDTO);
+    }
+
+    @PostMapping("/getAfter")
+    public List<ExpenseRecordResponseDTO> getAfter(
+            @AuthenticationPrincipal
+            User user,
+            @Valid
+            @RequestBody
+            GetAfterRequestDTO getAfterRequestDTO) {
+        return expenseRecordService.getAfter(user, getAfterRequestDTO.date());
     }
 
 }
