@@ -9,6 +9,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.every.expence.account.dto.AccountResponseDTO;
 import com.every.expence.account.dto.CreateAccountRequestDTO;
+import com.every.expence.account.dto.UpdateAccountRequestDTO;
 import com.every.expence.user.User;
 
 @Service
@@ -54,5 +55,20 @@ public class AccountService {
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
 
         accountRepository.delete(account);
+    }
+
+    public AccountResponseDTO update(User user, String accountId, UpdateAccountRequestDTO updateAccountRequestDTO) {
+        Account account = accountRepository.findByIdAndOwnerId(accountId, user.getId())
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
+
+        String name = updateAccountRequestDTO.name().trim();
+        String currency = updateAccountRequestDTO.currency().trim().toUpperCase(Locale.ROOT);
+
+        account.setName(name);
+        account.setCurrency(currency);
+        account.setBalance(updateAccountRequestDTO.balance());
+
+        Account saved = accountRepository.save(account);
+        return AccountResponseDTO.fromEntity(saved);
     }
 }

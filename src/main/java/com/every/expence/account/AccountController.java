@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.PutMapping;
 
+import com.every.expence.account.dto.UpdateAccountRequestDTO;
 import com.every.expence.account.dto.AccountResponseDTO;
 import com.every.expence.account.dto.CreateAccountRequestDTO;
 import com.every.expence.user.User;
@@ -55,5 +57,13 @@ public class AccountController {
             @AuthenticationPrincipal User user,
             @PathVariable String id) {
         return accountService.getById(user, id);
+    }
+
+    @PutMapping("/accounts/{id}")
+    public AccountResponseDTO update(
+            @AuthenticationPrincipal User user,
+            @PathVariable String id,
+            @Valid @RequestBody UpdateAccountRequestDTO updateAccountRequestDTO) {
+        return accountService.update(user, id, updateAccountRequestDTO);
     }
 }
