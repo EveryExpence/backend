@@ -10,7 +10,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.every.expence.category.dto.CategoryResponeDTO;
 import com.every.expence.category.dto.CreateCategoryRequestDTO;
-import com.every.expence.category.dto.DeleteCategoryRequestDTO;
 import com.every.expence.category.dto.UpdateCategoryRequestDTO;
 
 
@@ -61,21 +60,21 @@ public class CategoryService {
             .toList();
     }
 
-    private Category getById(String userId, String categoryId){
-        return categoryRepository.findByUserIdAndId(userId, categoryId).
-            orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
+    private Category getByUserAndId(String userId, String categoryId){
+        return categoryRepository.findByUserIdAndId(userId, categoryId)
+            .or(() -> categoryRepository.findByIdAndUserIdIsNull(categoryId))
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
     }
-    
 
-    public CategoryResponeDTO updateCategory(String userId, UpdateCategoryRequestDTO UpdateCategoryRequestDTO){
+    public CategoryResponeDTO updateCategory(String userId,String categoryId, UpdateCategoryRequestDTO UpdateCategoryRequestDTO){
         String normalizedName = normalizeName(UpdateCategoryRequestDTO.name());
         String normalizedType = normalizeType(UpdateCategoryRequestDTO.type());
 
-        Category currCategory = getById(userId, UpdateCategoryRequestDTO.categoryId());
+        Category currCategory = getByUserAndId(userId, categoryId);
 
         Optional<Category> duplicate = 
             categoryRepository.findByUserIdAndNameAndType(userId, normalizedName, normalizedType)
-            .filter(f -> !Objects.equals(f.getId(), UpdateCategoryRequestDTO.categoryId()));
+            .filter(f -> !Objects.equals(f.getId(), categoryId));
 
         if(duplicate.isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Category already exists");
@@ -94,8 +93,8 @@ public class CategoryService {
         return CategoryResponeDTO.fromEntity(saved);
     }
 
-    public void deleteCategory(String userId, DeleteCategoryRequestDTO deleteCategoryRequestDTO){
-        Category currCategory = getById(userId, deleteCategoryRequestDTO.categoryId());
+    public void deleteCategory(String userId, String categoryId){
+        Category currCategory = getByUserAndId(userId, categoryId);
         categoryRepository.delete(currCategory);
     }
 

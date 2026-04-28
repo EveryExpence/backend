@@ -1,11 +1,11 @@
 package com.every.expence.category;
 import com.every.expence.category.dto.CategoryResponeDTO;
 import com.every.expence.category.dto.CreateCategoryRequestDTO;
-import com.every.expence.category.dto.DeleteCategoryRequestDTO;
 import com.every.expence.category.dto.UpdateCategoryRequestDTO;
 import com.every.expence.user.User;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.*;
 
@@ -30,7 +31,7 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<CategoryResponeDTO> createCategory(
         @AuthenticationPrincipal User user,
         @Valid @RequestBody CreateCategoryRequestDTO createCategoryRequestDTO
@@ -40,26 +41,27 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.CREATED).body(currCategory);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCategory(
         @AuthenticationPrincipal User user,
-        @Valid @RequestBody DeleteCategoryRequestDTO deleteCategoryRequestDTO
+        @PathVariable("id") @NotNull String categoryId
     ){
-        categoryService.deleteCategory(user.getId(), deleteCategoryRequestDTO);
+        categoryService.deleteCategory(user.getId(), categoryId);
 
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping
+    @PutMapping("/{id}")
     public CategoryResponeDTO updateCategory(
         @AuthenticationPrincipal User user,
+        @PathVariable("id") @NotNull String categoryId,
         @Valid @RequestBody UpdateCategoryRequestDTO updateCategoryRequestDTO
     ){
-        return categoryService.updateCategory(user.getId(), updateCategoryRequestDTO);
+        return categoryService.updateCategory(user.getId(),categoryId, updateCategoryRequestDTO);
     }
 
 
-    @GetMapping
+    @GetMapping("/getAll")
     public List<CategoryResponeDTO> getCategories(
         @AuthenticationPrincipal User user,
         @RequestParam(required = false) String type
