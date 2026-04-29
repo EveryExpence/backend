@@ -62,7 +62,6 @@ public class CategoryService {
 
     private Category getByUserAndId(String userId, String categoryId){
         return categoryRepository.findByUserIdAndId(userId, categoryId)
-            .or(() -> categoryRepository.findByIdAndUserIdIsNull(categoryId))
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
     }
 
