@@ -1,5 +1,5 @@
 package com.every.expence.category;
-import com.every.expence.category.dto.CategoryResponeDTO;
+import com.every.expence.category.dto.CategoryResponseDTO;
 import com.every.expence.category.dto.CreateCategoryRequestDTO;
 import com.every.expence.category.dto.UpdateCategoryRequestDTO;
 import com.every.expence.user.User;
@@ -31,12 +31,12 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<CategoryResponeDTO> createCategory(
+    @PostMapping
+    public ResponseEntity<CategoryResponseDTO> createCategory(
         @AuthenticationPrincipal User user,
         @Valid @RequestBody CreateCategoryRequestDTO createCategoryRequestDTO
     ){
-        CategoryResponeDTO currCategory = categoryService.addCategory(user.getId(), createCategoryRequestDTO);
+        CategoryResponseDTO currCategory = categoryService.addCategory(user.getId(), createCategoryRequestDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(currCategory);
     }
@@ -52,7 +52,7 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}")
-    public CategoryResponeDTO updateCategory(
+    public CategoryResponseDTO updateCategory(
         @AuthenticationPrincipal User user,
         @PathVariable("id") @NotNull String categoryId,
         @Valid @RequestBody UpdateCategoryRequestDTO updateCategoryRequestDTO
@@ -62,7 +62,7 @@ public class CategoryController {
 
 
     @GetMapping("/getAll")
-    public List<CategoryResponeDTO> getCategories(
+    public List<CategoryResponseDTO> getCategories(
         @AuthenticationPrincipal User user,
         @RequestParam(required = false) String type
     ) {
