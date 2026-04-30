@@ -31,7 +31,7 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<CategoryResponseDTO> createCategory(
         @AuthenticationPrincipal User user,
         @Valid @RequestBody CreateCategoryRequestDTO createCategoryRequestDTO
