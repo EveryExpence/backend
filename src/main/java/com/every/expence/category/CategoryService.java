@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.every.expence.category.dto.CategoryResponeDTO;
+import com.every.expence.category.dto.CategoryResponseDTO;
 import com.every.expence.category.dto.CreateCategoryRequestDTO;
 import com.every.expence.category.dto.UpdateCategoryRequestDTO;
 
@@ -21,7 +21,7 @@ public class CategoryService {
         this.categoryRepository = categoryRepository;
     }
 
-    public CategoryResponeDTO addCategory(String userId, CreateCategoryRequestDTO CreateCategoryRequestDTO){
+    public CategoryResponseDTO addCategory(String userId, CreateCategoryRequestDTO CreateCategoryRequestDTO){
         String normalizedName = normalizeName(CreateCategoryRequestDTO.name());
         String normalizedType = normalizeType(CreateCategoryRequestDTO.type());
 
@@ -41,22 +41,22 @@ public class CategoryService {
 
         Category category = new Category(userId, normalizedName, normalizedType);
 
-        return CategoryResponeDTO.fromEntity(categoryRepository.save(category));
+        return CategoryResponseDTO.fromEntity(categoryRepository.save(category));
     }
 
-    public List<CategoryResponeDTO> getByUserId(String userId){
+    public List<CategoryResponseDTO> getByUserId(String userId){
         return categoryRepository.findAllVisibleForUser(userId)
             .stream()
-            .map(CategoryResponeDTO::fromEntity)
+            .map(CategoryResponseDTO::fromEntity)
             .toList();
     }
 
-    public List<CategoryResponeDTO> getByUserIdAndType(String userId, String type){
+    public List<CategoryResponseDTO> getByUserIdAndType(String userId, String type){
         String normalizedType = normalizeType(type);
 
         return categoryRepository.findAllVisibleForUserByType(userId, normalizedType)
             .stream()
-            .map(CategoryResponeDTO::fromEntity)
+            .map(CategoryResponseDTO::fromEntity)
             .toList();
     }
 
@@ -65,7 +65,7 @@ public class CategoryService {
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
     }
 
-    public CategoryResponeDTO updateCategory(String userId,String categoryId, UpdateCategoryRequestDTO UpdateCategoryRequestDTO){
+    public CategoryResponseDTO updateCategory(String userId,String categoryId, UpdateCategoryRequestDTO UpdateCategoryRequestDTO){
         String normalizedName = normalizeName(UpdateCategoryRequestDTO.name());
         String normalizedType = normalizeType(UpdateCategoryRequestDTO.type());
 
@@ -89,7 +89,7 @@ public class CategoryService {
 
         Category saved = categoryRepository.save(currCategory);
 
-        return CategoryResponeDTO.fromEntity(saved);
+        return CategoryResponseDTO.fromEntity(saved);
     }
 
     public void deleteCategory(String userId, String categoryId){
