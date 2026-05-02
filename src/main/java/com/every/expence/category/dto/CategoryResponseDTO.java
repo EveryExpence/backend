@@ -2,14 +2,14 @@ package com.every.expence.category.dto;
 
 import com.every.expence.category.Category;
 
-public record CategoryResponeDTO(
+public record CategoryResponseDTO(
     String Id,
     String userId,
     String name,
     String type
 ) {
-    public static CategoryResponeDTO fromEntity(Category category){
-        return new CategoryResponeDTO(
+    public static CategoryResponseDTO fromEntity(Category category){
+        return new CategoryResponseDTO(
             category.getId(),
             category.getUserId(),
             category.getName(),
