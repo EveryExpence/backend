@@ -4,6 +4,7 @@ import com.every.expence.auth.dto.LoginRequestDTO;
 import com.every.expence.auth.dto.LoginResponseDTO;
 import com.every.expence.auth.dto.LogoutRequestDTO;
 import com.every.expence.auth.dto.RefreshRequestDTO;
+import com.every.expence.auth.dto.RefreshResponseDTO;
 import com.every.expence.auth.dto.RegistrationRequestDTO;
 import com.every.expence.user.User;
 
@@ -36,7 +37,7 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public String refreshToken(@RequestBody RefreshRequestDTO refreshRequestDTO) {
+    public RefreshResponseDTO refreshToken(@RequestBody RefreshRequestDTO refreshRequestDTO) {
         return authService.refresh(refreshRequestDTO);
     }
 
