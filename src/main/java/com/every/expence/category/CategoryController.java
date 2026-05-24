@@ -1,4 +1,5 @@
 package com.every.expence.category;
+
 import com.every.expence.category.dto.CategoryResponseDTO;
 import com.every.expence.category.dto.CreateCategoryRequestDTO;
 import com.every.expence.category.dto.UpdateCategoryRequestDTO;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -33,9 +33,8 @@ public class CategoryController {
 
     @PostMapping("/create")
     public ResponseEntity<CategoryResponseDTO> createCategory(
-        @AuthenticationPrincipal User user,
-        @Valid @RequestBody CreateCategoryRequestDTO createCategoryRequestDTO
-    ){
+            @AuthenticationPrincipal User user,
+            @Valid @RequestBody CreateCategoryRequestDTO createCategoryRequestDTO) {
         CategoryResponseDTO currCategory = categoryService.addCategory(user.getId(), createCategoryRequestDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(currCategory);
@@ -43,9 +42,8 @@ public class CategoryController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCategory(
-        @AuthenticationPrincipal User user,
-        @PathVariable("id") @NotNull String categoryId
-    ){
+            @AuthenticationPrincipal User user,
+            @PathVariable("id") @NotNull String categoryId) {
         categoryService.deleteCategory(user.getId(), categoryId);
 
         return ResponseEntity.noContent().build();
@@ -53,22 +51,16 @@ public class CategoryController {
 
     @PutMapping("/{id}")
     public CategoryResponseDTO updateCategory(
-        @AuthenticationPrincipal User user,
-        @PathVariable("id") @NotNull String categoryId,
-        @Valid @RequestBody UpdateCategoryRequestDTO updateCategoryRequestDTO
-    ){
-        return categoryService.updateCategory(user.getId(),categoryId, updateCategoryRequestDTO);
+            @AuthenticationPrincipal User user,
+            @PathVariable("id") @NotNull String categoryId,
+            @Valid @RequestBody UpdateCategoryRequestDTO updateCategoryRequestDTO) {
+        return categoryService.updateCategory(user.getId(), categoryId, updateCategoryRequestDTO);
     }
-
 
     @GetMapping("/getAll")
     public List<CategoryResponseDTO> getCategories(
-        @AuthenticationPrincipal User user,
-        @RequestParam(required = false) String type
-    ) {
+            @AuthenticationPrincipal User user) {
         String userId = user.getId();
-        if(type == null || type.isBlank()) return categoryService.getByUserId(userId);
-
-        return categoryService.getByUserIdAndType(userId, type);
+        return categoryService.getByUserId(userId);
     }
 }

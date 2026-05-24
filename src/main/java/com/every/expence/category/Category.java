@@ -6,9 +6,9 @@ import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection="categories")
+@Document(collection = "categories")
 @CompoundIndexes({
-    @CompoundIndex(name = "uniq_user_name_type", def = "{'userId': 1, 'name': 1, 'type': 1}", unique = true)
+        @CompoundIndex(name = "uniq_user_name_type", def = "{'userId': 1, 'name': 1, 'type': 1}", unique = true)
 })
 public class Category {
     @Id
@@ -21,12 +21,10 @@ public class Category {
 
     private String type;
 
-
     public Category(String name, String type) {
         this.name = name;
         this.type = type;
     }
-
 
     public Category(String id, String userId, String name, String type) {
         this.id = id;
@@ -40,35 +38,30 @@ public class Category {
         this.name = name;
         this.type = type;
     }
-    
+
     public Category() {
-        
+
     }
 
     public String getUserId() {
         return userId;
     }
 
-
     public void setUserId(String userId) {
         this.userId = userId;
     }
-
 
     public String getName() {
         return name;
     }
 
-
     public void setName(String name) {
         this.name = name;
     }
 
-
     public String getType() {
         return type;
     }
-
 
     public void setType(String type) {
         this.type = type;
@@ -77,7 +70,6 @@ public class Category {
     public String getId() {
         return id;
     }
-
 
     public void setId(String id) {
         this.id = id;
