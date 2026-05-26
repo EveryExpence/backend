@@ -5,7 +5,9 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.Base64;
+import java.util.Set;
 
 import com.every.expence.receipts.dto.ReceiptAnalysisResponse;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -23,6 +25,9 @@ import org.springframework.web.server.ResponseStatusException;
 public class ReceiptAnalysisService {
     private static final String GEMINI_URL_TEMPLATE =
         "https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s";
+    private static final Set<String> ALLOWED_MIME_TYPES = Set.of("image/jpeg", "image/png", "image/jpg");
+    private static final long MAX_IMAGE_BYTES = 10L * 1024L * 1024L;
+    private static final Duration GEMINI_TIMEOUT = Duration.ofSeconds(30);
 
     private final ObjectMapper objectMapper;
     private final HttpClient httpClient;
@@ -37,10 +42,29 @@ public class ReceiptAnalysisService {
         this.objectMapper = objectMapper;
         this.apiKey = apiKey;
         this.model = model;
-        this.httpClient = HttpClient.newHttpClient();
+        this.httpClient = HttpClient.newBuilder()
+            .connectTimeout(Duration.ofSeconds(10))
+            .build();
     }
 
     public ReceiptAnalysisResponse analyze(MultipartFile image) {
+        if (image == null || image.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Image is required");
+        }
+
+        if (image.getSize() > MAX_IMAGE_BYTES) {
+            throw new ResponseStatusException(HttpStatus.CONTENT_TOO_LARGE, "Image exceeds 10MB limit");
+        }
+
+        String mimeType = image.getContentType();
+        if (mimeType == null || mimeType.isBlank()) {
+            mimeType = "image/jpeg";
+        }
+
+        if (!ALLOWED_MIME_TYPES.contains(mimeType)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unsupported image type");
+        }
+
         byte[] imageBytes;
         try {
             imageBytes = image.getBytes();
@@ -49,10 +73,6 @@ public class ReceiptAnalysisService {
         }
 
         String base64Image = Base64.getEncoder().encodeToString(imageBytes);
-        String mimeType = image.getContentType();
-        if (mimeType == null || mimeType.isBlank()) {
-            mimeType = "image/jpeg";
-        }
 
         String prompt = "Extract expense data from this receipt image into a single JSON object "
             + "with keys: store_name, products, location{lat,lng,city}, amount, category, payment_method. "
@@ -68,6 +88,7 @@ public class ReceiptAnalysisService {
         HttpRequest request = HttpRequest.newBuilder()
             .uri(URI.create(String.format(GEMINI_URL_TEMPLATE, model, apiKey)))
             .header("Content-Type", "application/json")
+            .timeout(GEMINI_TIMEOUT)
             .POST(HttpRequest.BodyPublishers.ofString(requestBody))
             .build();
 
