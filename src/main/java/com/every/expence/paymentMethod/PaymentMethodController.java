@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.every.expence.paymentMethod.dto.CreatePaymentMethodRequestDTO;
 import com.every.expence.paymentMethod.dto.PaymentMethodResponseDTO;
-import com.every.expence.paymentMethod.dto.RenamePaymentMethodRequestDTO;
+import com.every.expence.paymentMethod.dto.UpdatePaymentMethodRequestDTO;
 import com.every.expence.user.User;
 
 import jakarta.validation.Valid;
@@ -16,7 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,7 +37,7 @@ public class PaymentMethodController {
             @Valid
             @RequestBody
             CreatePaymentMethodRequestDTO createPaymentMethodRequestDTO) {
-        PaymentMethod paymentMethod = paymentMethodService.addPaymentMethod(user, createPaymentMethodRequestDTO.name());
+        PaymentMethod paymentMethod = paymentMethodService.addPaymentMethod(user, createPaymentMethodRequestDTO);
         return new PaymentMethodResponseDTO(paymentMethod.getId(), paymentMethod.getName());
     }
 
@@ -61,19 +61,19 @@ public class PaymentMethodController {
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/{id}/rename")
-    public PaymentMethodResponseDTO renamePaymentMethod(
+    @PutMapping("/{id}")
+    public PaymentMethodResponseDTO updatePaymentMethod(
             @AuthenticationPrincipal
             User user,
             @PathVariable
             String id,
             @Valid
             @RequestBody
-            RenamePaymentMethodRequestDTO renamePaymentMethodRequestDTO) {
-        PaymentMethod paymentMethod = paymentMethodService.renamePaymentMethodById(
+            UpdatePaymentMethodRequestDTO updatePaymentMethodRequestDTO) {
+        PaymentMethod paymentMethod = paymentMethodService.updatePaymentMethodById(
                 user,
                 id,
-                renamePaymentMethodRequestDTO.newName());
+                updatePaymentMethodRequestDTO);
         return new PaymentMethodResponseDTO(paymentMethod.getId(), paymentMethod.getName());
     }
 

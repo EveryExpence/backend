@@ -18,6 +18,10 @@ public class PaymentMethod {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getUserId() {
         return userId;
     }
@@ -38,6 +42,12 @@ public class PaymentMethod {
     }
 
     public PaymentMethod(String userId, String name) {
+        this.userId = userId;
+        this.name = name;
+    }
+
+    public PaymentMethod(String id, String userId, String name) {
+        this.id = id;
         this.userId = userId;
         this.name = name;
     }
