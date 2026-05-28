@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.every.expence.expenseRecord.dto.GetAfterRequestDTO;
 import com.every.expence.expenseRecord.dto.CreateRequestDTO;
+import com.every.expence.expenseRecord.dto.UpdateRequestDTO;
 import com.every.expence.expenseRecord.dto.ExpenseRecordResponseDTO;
 import com.every.expence.user.User;
 
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
@@ -45,6 +47,15 @@ public class ExpenseRecordController {
     @RequestBody
     CreateRequestDTO createRequestDTO) {
         return expenseRecordService.create(user, createRequestDTO);
+    }
+
+    @PutMapping("/{id}")
+    public ExpenseRecordResponseDTO update(@AuthenticationPrincipal
+    User user, @PathVariable
+    String id, @Valid
+    @RequestBody
+    UpdateRequestDTO updateRequestDTO) {
+        return expenseRecordService.update(user, id, updateRequestDTO);
     }
 
     @PostMapping("/getAfter")

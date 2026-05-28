@@ -12,6 +12,7 @@ import com.every.expence.account.AccountRepository;
 import com.every.expence.category.Category;
 import com.every.expence.category.CategoryRepository;
 import com.every.expence.expenseRecord.dto.CreateRequestDTO;
+import com.every.expence.expenseRecord.dto.UpdateRequestDTO;
 import com.every.expence.expenseRecord.dto.ExpenseRecordResponseDTO;
 import com.every.expence.paymentMethod.PaymentMethod;
 import com.every.expence.paymentMethod.PaymentMethodRepository;
@@ -52,6 +53,7 @@ public class ExpenseRecordService {
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
 
         ExpenseRecord expenseRecord = new ExpenseRecord();
+        expenseRecord.setId(createRequestDTO.id());
         expenseRecord.setUserId(user.getId());
         expenseRecord.setAmount(createRequestDTO.amount());
         expenseRecord.setDate(createRequestDTO.date());
@@ -91,5 +93,37 @@ public class ExpenseRecordService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Record not found"));
 
         expenseRecordRepository.delete(expenseRecord);
+    }
+
+    public ExpenseRecordResponseDTO update(User user, String id, UpdateRequestDTO updateRequestDTO) {
+        ExpenseRecord expenseRecord = expenseRecordRepository.findByIdAndUserId(id, user.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Record not found"));
+
+        Account account = accountRepository.findById(updateRequestDTO.accountId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
+
+        if (!account.getOwnerId().equals(user.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Account does not belong to user");
+        }
+
+        PaymentMethod paymentMethod = paymentMethodRepository.findByIdAndUserId(updateRequestDTO.paymentMethodId(), user.getId())
+            .or(() -> paymentMethodRepository.findByIdAndUserIdIsNull(updateRequestDTO.paymentMethodId()))
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Payment method not found"));
+
+        Category category = categoryRepository.findByUserIdAndId(user.getId(), updateRequestDTO.categoryId())
+            .or(() -> categoryRepository.findByIdAndUserIdIsNull(updateRequestDTO.categoryId()))
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
+
+        expenseRecord.setAmount(updateRequestDTO.amount());
+        expenseRecord.setDate(updateRequestDTO.date());
+        expenseRecord.setTime(updateRequestDTO.time());
+        expenseRecord.setLocation(updateRequestDTO.location());
+        expenseRecord.setAccountId(account.getId());
+        expenseRecord.setPaymentMethodId(paymentMethod.getId());
+        expenseRecord.setCategoryId(category.getId());
+        expenseRecord.setDescription(updateRequestDTO.description());
+        expenseRecord.setAttachments(updateRequestDTO.attachments());
+
+        return ExpenseRecordResponseDTO.fromEntity(expenseRecordRepository.save(expenseRecord));
     }
 }
