@@ -7,3 +7,7 @@ auth:
     issuer: EveryExpense
   refresh-token:
     expiration-time: 7d
+
+gemini:
+  api-key: "your-api-key"
+  model: "gemini-3.5-flash"
