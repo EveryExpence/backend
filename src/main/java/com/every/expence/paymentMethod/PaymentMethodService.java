@@ -6,7 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.every.expence.paymentMethod.dto.CreatePaymentMethodRequestDTO;
 import com.every.expence.paymentMethod.dto.PaymentMethodResponseDTO;
+import com.every.expence.paymentMethod.dto.UpdatePaymentMethodRequestDTO;
 import com.every.expence.user.User;
 
 @Service
@@ -17,15 +19,15 @@ public class PaymentMethodService {
         this.paymentMethodRepository = paymentMethodRepository;
     }
 
-    public PaymentMethod addPaymentMethod(User user, String name) {
-        String normalizedName = name.trim();
+    public PaymentMethod addPaymentMethod(User user, CreatePaymentMethodRequestDTO createPaymentMethodRequestDTO) {
+        String normalizedName = createPaymentMethodRequestDTO.name().trim();
 
         boolean nameTaken = paymentMethodRepository.existsByUserIdAndName(user.getId(), normalizedName);
         if (nameTaken) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Payment method name already in use");
         }
 
-        PaymentMethod paymentMethod = new PaymentMethod(user.getId(), normalizedName);
+        PaymentMethod paymentMethod = new PaymentMethod(createPaymentMethodRequestDTO.id(), user.getId(), normalizedName);
         return paymentMethodRepository.save(paymentMethod);
     }
 
@@ -42,8 +44,8 @@ public class PaymentMethodService {
         }
     }
 
-    public PaymentMethod renamePaymentMethodById(User user, String id, String newName) {
-        String normalizedNewName = newName.trim();
+    public PaymentMethod updatePaymentMethodById(User user, String id, UpdatePaymentMethodRequestDTO updatePaymentMethodRequestDTO) {
+        String normalizedNewName = updatePaymentMethodRequestDTO.name().trim();
 
         PaymentMethod paymentMethod = paymentMethodRepository.findByIdAndUserId(id, user.getId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Payment method not found"));

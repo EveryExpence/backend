@@ -25,6 +25,7 @@ public class AccountService {
         String currency = createAccountRequestDTO.currency().trim().toUpperCase(Locale.ROOT);
 
         Account account = new Account(
+            createAccountRequestDTO.id(),
             user.getId(),
             name,
             currency,
