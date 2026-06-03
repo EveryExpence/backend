@@ -49,32 +49,46 @@ public class ReceiptAnalysisService {
             .build();
     }
 
-    public ReceiptAnalysisResponse analyze(MultipartFile image, List<String> categories, List<String> paymentMethods) {
-        if (image == null || image.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Image is required");
+    private record ImageData(String base64Data, String mimeType) {}
+
+    public ReceiptAnalysisResponse analyze(List<MultipartFile> images, List<String> categories, List<String> paymentMethods) {
+        if (images == null || images.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Images are required");
         }
 
-        if (image.getSize() > MAX_IMAGE_BYTES) {
-            throw new ResponseStatusException(HttpStatus.CONTENT_TOO_LARGE, "Image exceeds 10MB limit");
+        List<ImageData> imageDataList = new java.util.ArrayList<>();
+        for (MultipartFile image : images) {
+            if (image == null || image.isEmpty()) {
+                continue;
+            }
+
+            if (image.getSize() > MAX_IMAGE_BYTES) {
+                throw new ResponseStatusException(HttpStatus.CONTENT_TOO_LARGE, "Image exceeds 10MB limit");
+            }
+
+            String mimeType = image.getContentType();
+            if (mimeType == null || mimeType.isBlank()) {
+                mimeType = "image/jpeg";
+            }
+
+            if (!ALLOWED_MIME_TYPES.contains(mimeType)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unsupported image type");
+            }
+
+            byte[] imageBytes;
+            try {
+                imageBytes = image.getBytes();
+            } catch (IOException ex) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid image", ex);
+            }
+
+            String base64Image = Base64.getEncoder().encodeToString(imageBytes);
+            imageDataList.add(new ImageData(base64Image, mimeType));
         }
 
-        String mimeType = image.getContentType();
-        if (mimeType == null || mimeType.isBlank()) {
-            mimeType = "image/jpeg";
+        if (imageDataList.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Images are required");
         }
-
-        if (!ALLOWED_MIME_TYPES.contains(mimeType)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unsupported image type");
-        }
-
-        byte[] imageBytes;
-        try {
-            imageBytes = image.getBytes();
-        } catch (IOException ex) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid image", ex);
-        }
-
-        String base64Image = Base64.getEncoder().encodeToString(imageBytes);
 
         String categoryConstraint;
         if (categories != null && !categories.isEmpty()) {
@@ -96,7 +110,7 @@ public class ReceiptAnalysisService {
             paymentMethodConstraint = "payment_method must be strictly one of: cash, card, or null.";
         }
 
-        String prompt = "Extract expense data from this receipt image into a single JSON object "
+        String prompt = "Extract expense data from these receipt images into a single JSON object "
             + "with keys: store_name, products, location{lat,lng,city}, amount, category, payment_method. "
             + "No extra keys. "
             + "store_name: the store/merchant name, or null if not found. "
@@ -107,7 +121,7 @@ public class ReceiptAnalysisService {
             + "For location.city: use the city where the purchase happened (store location). "
             + "If multiple cities appear, prefer the one closest to PARAGON, SPRZEDAZ, or the date/time; otherwise null.";
 
-        String requestBody = buildRequestBody(prompt, base64Image, mimeType);
+        String requestBody = buildRequestBody(prompt, imageDataList);
         HttpRequest request = HttpRequest.newBuilder()
             .uri(URI.create(String.format(GEMINI_URL_TEMPLATE, model, apiKey)))
             .header("Content-Type", "application/json")
@@ -150,16 +164,18 @@ public class ReceiptAnalysisService {
         }
     }
 
-    private String buildRequestBody(String prompt, String base64Image, String mimeType) {
+    private String buildRequestBody(String prompt, List<ImageData> images) {
         ObjectNode root = objectMapper.createObjectNode();
         ArrayNode contents = root.putArray("contents");
         ObjectNode content = contents.addObject();
         ArrayNode parts = content.putArray("parts");
 
         parts.addObject().put("text", prompt);
-        ObjectNode inlineData = parts.addObject().putObject("inline_data");
-        inlineData.put("mime_type", mimeType);
-        inlineData.put("data", base64Image);
+        for (ImageData img : images) {
+            ObjectNode inlineData = parts.addObject().putObject("inline_data");
+            inlineData.put("mime_type", img.mimeType());
+            inlineData.put("data", img.base64Data());
+        }
 
         ObjectNode generationConfig = root.putObject("generationConfig");
         generationConfig.put("responseMimeType", "application/json");

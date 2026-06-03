@@ -24,11 +24,11 @@ public class ReceiptAnalysisController {
         consumes = MediaType.MULTIPART_FORM_DATA_VALUE
     )
     public ResponseEntity<ReceiptAnalysisResponse> analyze(
-        @RequestParam("image") MultipartFile image,
+        @RequestParam("images") List<MultipartFile> images,
         @RequestParam(value = "categories", required = false) List<String> categories,
         @RequestParam(value = "paymentMethods", required = false) List<String> paymentMethods
     ) {
-        ReceiptAnalysisResponse result = receiptAnalysisService.analyze(image, categories, paymentMethods);
+        ReceiptAnalysisResponse result = receiptAnalysisService.analyze(images, categories, paymentMethods);
         return ResponseEntity.ok(result);
     }
 }
