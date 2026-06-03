@@ -150,18 +150,92 @@ public class ReceiptAnalysisService {
                 throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Gemini returned no content");
             }
 
-            if (textNode.isObject()) {
-                return objectMapper.treeToValue(textNode, ReceiptAnalysisResponse.class);
+            JsonNode payloadNode;
+            if (textNode.isObject() || textNode.isArray()) {
+                payloadNode = textNode;
+            } else {
+                payloadNode = objectMapper.readTree(textNode.asText());
             }
 
-            String jsonPayload = textNode.asText();
-            return objectMapper.readValue(jsonPayload, ReceiptAnalysisResponse.class);
+            ReceiptAnalysisResponse result;
+            if (payloadNode.isArray()) {
+                List<ReceiptAnalysisResponse> responses = new java.util.ArrayList<>();
+                for (JsonNode node : payloadNode) {
+                    responses.add(objectMapper.treeToValue(node, ReceiptAnalysisResponse.class));
+                }
+                result = mergeResponses(responses);
+            } else {
+                result = objectMapper.treeToValue(payloadNode, ReceiptAnalysisResponse.class);
+            }
+            return roundAmount(result);
         } catch (InterruptedException ex) {
+            ex.printStackTrace();
             Thread.currentThread().interrupt();
             throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Gemini request interrupted", ex);
         } catch (IOException ex) {
+            ex.printStackTrace();
             throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Gemini request failed", ex);
         }
+    }
+
+    private ReceiptAnalysisResponse mergeResponses(List<ReceiptAnalysisResponse> responses) {
+        if (responses == null || responses.isEmpty()) {
+            return new ReceiptAnalysisResponse(null, List.of(), null, null, null, null);
+        }
+        if (responses.size() == 1) {
+            return responses.get(0);
+        }
+
+        String storeName = null;
+        List<ReceiptAnalysisResponse.Product> products = new java.util.ArrayList<>();
+        ReceiptAnalysisResponse.Location location = null;
+        Double amount = null;
+        String category = null;
+        String paymentMethod = null;
+
+        for (ReceiptAnalysisResponse res : responses) {
+            if (res == null) {
+                continue;
+            }
+            if (storeName == null && res.storeName() != null && !res.storeName().isBlank()) {
+                storeName = res.storeName();
+            }
+            if (res.products() != null) {
+                products.addAll(res.products());
+            }
+            if (location == null && res.location() != null) {
+                location = res.location();
+            }
+            if (res.amount() != null) {
+                if (amount == null) {
+                    amount = 0.0;
+                }
+                amount += res.amount();
+            }
+            if (category == null && res.category() != null && !res.category().isBlank()) {
+                category = res.category();
+            }
+            if (paymentMethod == null && res.paymentMethod() != null && !res.paymentMethod().isBlank()) {
+                paymentMethod = res.paymentMethod();
+            }
+        }
+
+        return new ReceiptAnalysisResponse(storeName, products, location, amount, category, paymentMethod);
+    }
+
+    private ReceiptAnalysisResponse roundAmount(ReceiptAnalysisResponse response) {
+        if (response == null || response.amount() == null) {
+            return response;
+        }
+        Double rounded = Math.round(response.amount() * 100.0) / 100.0;
+        return new ReceiptAnalysisResponse(
+            response.storeName(),
+            response.products(),
+            response.location(),
+            rounded,
+            response.category(),
+            response.paymentMethod()
+        );
     }
 
     private String buildRequestBody(String prompt, List<ImageData> images) {
