@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/receipts")
 public class ReceiptAnalysisController {
@@ -22,9 +24,11 @@ public class ReceiptAnalysisController {
         consumes = MediaType.MULTIPART_FORM_DATA_VALUE
     )
     public ResponseEntity<ReceiptAnalysisResponse> analyze(
-        @RequestParam("image") MultipartFile image
+        @RequestParam("image") MultipartFile image,
+        @RequestParam(value = "categories", required = false) List<String> categories,
+        @RequestParam(value = "paymentMethods", required = false) List<String> paymentMethods
     ) {
-        ReceiptAnalysisResponse result = receiptAnalysisService.analyze(image);
+        ReceiptAnalysisResponse result = receiptAnalysisService.analyze(image, categories, paymentMethods);
         return ResponseEntity.ok(result);
     }
 }

@@ -7,7 +7,9 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.Base64;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.every.expence.receipts.dto.ReceiptAnalysisResponse;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -47,7 +49,7 @@ public class ReceiptAnalysisService {
             .build();
     }
 
-    public ReceiptAnalysisResponse analyze(MultipartFile image) {
+    public ReceiptAnalysisResponse analyze(MultipartFile image, List<String> categories, List<String> paymentMethods) {
         if (image == null || image.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Image is required");
         }
@@ -74,13 +76,34 @@ public class ReceiptAnalysisService {
 
         String base64Image = Base64.getEncoder().encodeToString(imageBytes);
 
+        String categoryConstraint;
+        if (categories != null && !categories.isEmpty()) {
+            String joined = categories.stream()
+                .map(c -> "\"" + c + "\"")
+                .collect(Collectors.joining(", "));
+            categoryConstraint = "category must be exactly one of these values (case-sensitive): [" + joined + "], or null if none match.";
+        } else {
+            categoryConstraint = "category: a general expense category string, or null if unclear.";
+        }
+
+        String paymentMethodConstraint;
+        if (paymentMethods != null && !paymentMethods.isEmpty()) {
+            String joined = paymentMethods.stream()
+                .map(p -> "\"" + p + "\"")
+                .collect(Collectors.joining(", "));
+            paymentMethodConstraint = "payment_method must be exactly one of these values (case-sensitive): [" + joined + "], or null if none match.";
+        } else {
+            paymentMethodConstraint = "payment_method must be strictly one of: cash, card, or null.";
+        }
+
         String prompt = "Extract expense data from this receipt image into a single JSON object "
             + "with keys: store_name, products, location{lat,lng,city}, amount, category, payment_method. "
             + "No extra keys. "
             + "store_name: the store/merchant name, or null if not found. "
             + "products: list of line items; each item has {name, price}. If price is unclear, use null. "
             + "If no products can be detected, return an empty list. "
-            + "payment_method must be strictly one of: cash, card, or null. "
+            + categoryConstraint + " "
+            + paymentMethodConstraint + " "
             + "For location.city: use the city where the purchase happened (store location). "
             + "If multiple cities appear, prefer the one closest to PARAGON, SPRZEDAZ, or the date/time; otherwise null.";
 
