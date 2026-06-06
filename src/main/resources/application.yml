@@ -20,6 +20,11 @@ spring:
     error:
       include-stacktrace: never
 
+  servlet:
+    multipart:
+      max-file-size: 15MB
+      max-request-size: 15MB
+
 management:
   endpoint:
     health:
