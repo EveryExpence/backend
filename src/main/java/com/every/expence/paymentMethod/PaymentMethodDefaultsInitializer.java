@@ -9,12 +9,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class PaymentMethodDefaultsInitializer implements ApplicationRunner {
-    private static final List<String> DEFAULT_METHODS = List.of(
-            "Cash",
-            "Credit Card",
-            "Debit Card",
-            "Bank Transfer",
-            "Check");
+    private static final List<PaymentMethod> DEFAULT_METHODS = List.of(
+            new PaymentMethod("pm_cash", null, "Cash"),
+            new PaymentMethod("pm_credit_card", null, "Credit Card"),
+            new PaymentMethod("pm_debit_card", null, "Debit Card"),
+            new PaymentMethod("pm_bank_transfer", null, "Bank Transfer"),
+            new PaymentMethod("pm_check", null, "Check")
+    );
 
     private final PaymentMethodRepository paymentMethodRepository;
 
@@ -24,10 +25,10 @@ public class PaymentMethodDefaultsInitializer implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-        for (String name : DEFAULT_METHODS) {
-            if (!paymentMethodRepository.existsByUserIdIsNullAndName(name)) {
+        for (PaymentMethod method : DEFAULT_METHODS) {
+            if (!paymentMethodRepository.existsByUserIdIsNullAndName(method.getName())) {
                 try {
-                    paymentMethodRepository.save(new PaymentMethod(null, name));
+                    paymentMethodRepository.save(method);
                 } catch (DuplicateKeyException ignored) {
                 }
             }
