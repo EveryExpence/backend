@@ -9,7 +9,7 @@ spring:
     name: expense
 
   mongodb:
-    uri: ${MONGODB_URI:${MONGO_URL:mongodb://root:some_secret_password@mongo:27017/db}}
+    uri: ${MONGODB_URI:${MONGO_URL:mongodb://root:some_secret_password@mongo:27017/db?authSource=admin}}
     auto-index-creation: true
 
   mvc:
