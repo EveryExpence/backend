@@ -3,14 +3,15 @@ server:
 
 spring:
   profiles:
-    default: local
+    default: ${SPRING_PROFILES_ACTIVE:local}
 
   application:
     name: expense
 
-  mongodb:
-    uri: ${MONGODB_URI:${MONGO_URL:mongodb://root:some_secret_password@mongo:27017/db}}
-    auto-index-creation: true
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:${MONGO_URL:mongodb://root:some_secret_password@mongo:27017/db}}
+      auto-index-creation: true
 
   mvc:
     problemdetails:
