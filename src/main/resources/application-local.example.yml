@@ -1,10 +1,9 @@
 # An example of application-local.yml config
 spring:
-  data:
-    mongodb:
-      # Override this if you are running MongoDB locally without Docker
-      # uri: mongodb://root:some_secret_password@localhost:27017/db
-      uri: mongodb://root:some_secret_password@mongo:27017/db
+  mongodb:
+    # Override this if you are running MongoDB locally without Docker
+    # uri: mongodb://root:some_secret_password@localhost:27017/db
+    uri: mongodb://root:some_secret_password@mongo:27017/db
 
 auth:
   jwt:
