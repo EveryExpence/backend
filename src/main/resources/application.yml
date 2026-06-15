@@ -1,3 +1,6 @@
+server:
+  port: ${PORT:8080}
+
 spring:
   profiles:
     default: local
@@ -5,12 +8,9 @@ spring:
   application:
     name: expense
 
-  mongodb:
-    uri: mongodb://root:some_secret_password@mongo:27017/
-    database: db
-
   data:
     mongodb:
+      uri: ${MONGODB_URI:${MONGO_URL:mongodb://root:some_secret_password@mongo:27017/db}}
       auto-index-creation: true
 
   mvc:
@@ -36,3 +36,15 @@ management:
   health:
     mongodb:
       enabled: true
+
+auth:
+  jwt:
+    secret: ${JWT_SECRET:your-very-long-base64-encoded-secret-here}
+    expiration-time: ${JWT_EXPIRATION_TIME:15m}
+    issuer: ${JWT_ISSUER:EveryExpense}
+  refresh-token:
+    expiration-time: ${REFRESH_TOKEN_EXPIRATION_TIME:7d}
+
+gemini:
+  api-key: ${GEMINI_API_KEY:your-api-key}
+  model: ${GEMINI_MODEL:gemini-3.5-flash}
