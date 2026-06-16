@@ -29,6 +29,8 @@ auth:
     secret: ${JWT_SECRET:very_secret_key_change_it_in_production}
     expiration-time: ${JWT_EXPIRATION:1h}
     issuer: ${JWT_ISSUER:expense-app}
+  refresh-token:
+    expiration-time: ${REFRESH_TOKEN_EXPIRATION_TIME:7d}
 
 gemini:
   api-key: ${GEMINI_API_KEY}
