@@ -1,17 +1,16 @@
+server:
+  port: ${PORT:8080}
+
 spring:
   profiles:
-    default: local
+    default: ${SPRING_PROFILES_ACTIVE:local}
 
   application:
     name: expense
 
   mongodb:
-    uri: mongodb://root:some_secret_password@mongo:27017/
-    database: db
-
-  data:
-    mongodb:
-      auto-index-creation: true
+    uri: ${MONGODB_URI:${MONGO_URL:mongodb://root:some_secret_password@mongo:27017/db?authSource=admin}}
+    auto-index-creation: true
 
   mvc:
     problemdetails:
@@ -25,6 +24,16 @@ spring:
       max-file-size: 15MB
       max-request-size: 15MB
 
+auth:
+  jwt:
+    secret: ${JWT_SECRET:very_secret_key_change_it_in_production}
+    expiration-time: ${JWT_EXPIRATION:1h}
+    issuer: ${JWT_ISSUER:expense-app}
+
+gemini:
+  api-key: ${GEMINI_API_KEY}
+  model: ${GEMINI_MODEL:gemini-1.5-flash}
+
 management:
   endpoint:
     health:
@@ -36,3 +45,4 @@ management:
   health:
     mongodb:
       enabled: true
+
