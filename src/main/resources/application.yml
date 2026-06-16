@@ -24,6 +24,16 @@ spring:
       max-file-size: 15MB
       max-request-size: 15MB
 
+auth:
+  jwt:
+    secret: ${JWT_SECRET:very_secret_key_change_it_in_production}
+    expiration-time: ${JWT_EXPIRATION:1h}
+    issuer: ${JWT_ISSUER:expense-app}
+
+gemini:
+  api-key: ${GEMINI_API_KEY}
+  model: ${GEMINI_MODEL:gemini-1.5-flash}
+
 management:
   endpoint:
     health:
