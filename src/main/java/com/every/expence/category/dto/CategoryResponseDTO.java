@@ -6,12 +6,14 @@ public record CategoryResponseDTO(
         String id,
         String userId,
         String name,
-        String type) {
+        String type,
+        String icon) {
     public static CategoryResponseDTO fromEntity(Category category) {
         return new CategoryResponseDTO(
                 category.getId(),
                 category.getUserId(),
                 category.getName(),
-                category.getType());
+                category.getType(),
+                category.getIcon());
     }
 }

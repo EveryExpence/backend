@@ -21,22 +21,27 @@ public class Category {
 
     private String type;
 
-    public Category(String name, String type) {
+    private String icon;
+
+    public Category(String name, String type, String icon) {
         this.name = name;
         this.type = type;
+        this.icon = icon;
     }
 
-    public Category(String id, String userId, String name, String type) {
+    public Category(String id, String userId, String name, String type, String icon) {
         this.id = id;
         this.userId = userId;
         this.name = name;
         this.type = type;
+        this.icon = icon;
     }
 
-    public Category(String userId, String name, String type) {
+    public Category(String userId, String name, String type, String icon) {
         this.userId = userId;
         this.name = name;
         this.type = type;
+        this.icon = icon;
     }
 
     public Category() {
@@ -73,5 +78,13 @@ public class Category {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
     }
 }

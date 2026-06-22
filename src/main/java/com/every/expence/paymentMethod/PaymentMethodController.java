@@ -32,54 +32,42 @@ public class PaymentMethodController {
 
     @PostMapping("/create")
     public PaymentMethodResponseDTO addPaymentMethod(
-            @AuthenticationPrincipal
-            User user,
-            @Valid
-            @RequestBody
-            CreatePaymentMethodRequestDTO createPaymentMethodRequestDTO) {
+            @AuthenticationPrincipal User user,
+            @Valid @RequestBody CreatePaymentMethodRequestDTO createPaymentMethodRequestDTO) {
         PaymentMethod paymentMethod = paymentMethodService.addPaymentMethod(user, createPaymentMethodRequestDTO);
-        return new PaymentMethodResponseDTO(paymentMethod.getId(), paymentMethod.getName());
+        return new PaymentMethodResponseDTO(paymentMethod.getId(), paymentMethod.getName(), paymentMethod.getIcon());
     }
 
     @GetMapping("/{id}")
     public PaymentMethodResponseDTO getPaymentMethod(
-            @AuthenticationPrincipal
-            User user,
-            @PathVariable
-            String id) {
+            @AuthenticationPrincipal User user,
+            @PathVariable String id) {
         PaymentMethod paymentMethod = paymentMethodService.getPaymentMethod(user, id);
-        return new PaymentMethodResponseDTO(paymentMethod.getId(), paymentMethod.getName());
+        return new PaymentMethodResponseDTO(paymentMethod.getId(), paymentMethod.getName(), paymentMethod.getIcon());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePaymentMethod(
-            @AuthenticationPrincipal
-            User user,
-            @PathVariable
-            String id) {
+            @AuthenticationPrincipal User user,
+            @PathVariable String id) {
         paymentMethodService.deletePaymentMethod(user, id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}")
     public PaymentMethodResponseDTO updatePaymentMethod(
-            @AuthenticationPrincipal
-            User user,
-            @PathVariable
-            String id,
-            @Valid
-            @RequestBody
-            UpdatePaymentMethodRequestDTO updatePaymentMethodRequestDTO) {
+            @AuthenticationPrincipal User user,
+            @PathVariable String id,
+            @Valid @RequestBody UpdatePaymentMethodRequestDTO updatePaymentMethodRequestDTO) {
         PaymentMethod paymentMethod = paymentMethodService.updatePaymentMethodById(
                 user,
                 id,
                 updatePaymentMethodRequestDTO);
-        return new PaymentMethodResponseDTO(paymentMethod.getId(), paymentMethod.getName());
+        return new PaymentMethodResponseDTO(paymentMethod.getId(), paymentMethod.getName(), paymentMethod.getIcon());
     }
 
     @GetMapping("/getAll")
-    public List<PaymentMethodResponseDTO> getMethodName(@AuthenticationPrincipal
-    User user) {
+    public List<PaymentMethodResponseDTO> getMethodName(@AuthenticationPrincipal User user) {
         return paymentMethodService.getAllPaymentMethods(user);
     }
 

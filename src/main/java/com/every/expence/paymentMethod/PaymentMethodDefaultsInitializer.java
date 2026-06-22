@@ -10,11 +10,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class PaymentMethodDefaultsInitializer implements ApplicationRunner {
     private static final List<PaymentMethod> DEFAULT_METHODS = List.of(
-            new PaymentMethod("pm_cash", null, "Cash"),
-            new PaymentMethod("pm_credit_card", null, "Credit Card"),
-            new PaymentMethod("pm_debit_card", null, "Debit Card"),
-            new PaymentMethod("pm_bank_transfer", null, "Bank Transfer"),
-            new PaymentMethod("pm_check", null, "Check")
+            new PaymentMethod("pm_cash", null, "Cash", "cash"),
+            new PaymentMethod("pm_credit_card", null, "Credit Card", "credit-card"),
+            new PaymentMethod("pm_debit_card", null, "Debit Card", "credit-card-outline"),
+            new PaymentMethod("pm_bank_transfer", null, "Bank Transfer", "bank-transfer"),
+            new PaymentMethod("pm_check", null, "Check", "checkbook")
     );
 
     private final PaymentMethodRepository paymentMethodRepository;

@@ -14,6 +14,8 @@ public class PaymentMethod {
 
     private String name;
 
+    private String icon;
+
     public String getId() {
         return id;
     }
@@ -41,15 +43,25 @@ public class PaymentMethod {
     public PaymentMethod() {
     }
 
-    public PaymentMethod(String userId, String name) {
+    public PaymentMethod(String userId, String name, String icon) {
         this.userId = userId;
         this.name = name;
+        this.icon = icon;
     }
 
-    public PaymentMethod(String id, String userId, String name) {
+    public PaymentMethod(String id, String userId, String name, String icon) {
         this.id = id;
         this.userId = userId;
         this.name = name;
+        this.icon = icon;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
     }
 
 }

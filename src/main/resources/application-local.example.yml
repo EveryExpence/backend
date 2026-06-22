@@ -17,3 +17,5 @@ gemini:
   api-key: "your-api-key"
   model: "gemini-3.5-flash"
 
+exchange-rates:
+  api-key: "your-exchange-rate-api-key"
