@@ -23,6 +23,7 @@ public class CategoryService {
     public CategoryResponseDTO addCategory(String userId, CreateCategoryRequestDTO categoryCreateRequestDTO) {
         String normalizedName = normalizeName(categoryCreateRequestDTO.name());
         String normalizedType = normalizeType(categoryCreateRequestDTO.type());
+        String icon = categoryCreateRequestDTO.icon();
 
         categoryRepository.findByUserIdAndNameAndType(
                 userId,
@@ -37,7 +38,7 @@ public class CategoryService {
                     throw new ResponseStatusException(HttpStatus.CONFLICT, "Category already exists");
                 });
 
-        Category category = new Category(categoryCreateRequestDTO.id(), userId, normalizedName, normalizedType);
+        Category category = new Category(categoryCreateRequestDTO.id(), userId, normalizedName, normalizedType, icon);
         return CategoryResponseDTO.fromEntity(categoryRepository.save(category));
     }
 
@@ -57,6 +58,7 @@ public class CategoryService {
             UpdateCategoryRequestDTO UpdateCategoryRequestDTO) {
         String normalizedName = normalizeName(UpdateCategoryRequestDTO.name());
         String normalizedType = normalizeType(UpdateCategoryRequestDTO.type());
+        String icon = UpdateCategoryRequestDTO.icon();
 
         Category currCategory = getByUserAndId(userId, categoryId);
 
@@ -75,6 +77,7 @@ public class CategoryService {
 
         currCategory.setName(normalizedName);
         currCategory.setType(normalizedType);
+        currCategory.setIcon(icon);
 
         Category saved = categoryRepository.save(currCategory);
 

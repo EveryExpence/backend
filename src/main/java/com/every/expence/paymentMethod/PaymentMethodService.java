@@ -21,13 +21,14 @@ public class PaymentMethodService {
 
     public PaymentMethod addPaymentMethod(User user, CreatePaymentMethodRequestDTO createPaymentMethodRequestDTO) {
         String normalizedName = createPaymentMethodRequestDTO.name().trim();
+        String icon = createPaymentMethodRequestDTO.icon();
 
         boolean nameTaken = paymentMethodRepository.existsByUserIdAndName(user.getId(), normalizedName);
         if (nameTaken) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Payment method name already in use");
         }
 
-        PaymentMethod paymentMethod = new PaymentMethod(createPaymentMethodRequestDTO.id(), user.getId(), normalizedName);
+        PaymentMethod paymentMethod = new PaymentMethod(createPaymentMethodRequestDTO.id(), user.getId(), normalizedName, icon);
         return paymentMethodRepository.save(paymentMethod);
     }
 
@@ -46,6 +47,7 @@ public class PaymentMethodService {
 
     public PaymentMethod updatePaymentMethodById(User user, String id, UpdatePaymentMethodRequestDTO updatePaymentMethodRequestDTO) {
         String normalizedNewName = updatePaymentMethodRequestDTO.name().trim();
+        String icon = updatePaymentMethodRequestDTO.icon();
 
         PaymentMethod paymentMethod = paymentMethodRepository.findByIdAndUserId(id, user.getId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Payment method not found"));
@@ -60,6 +62,7 @@ public class PaymentMethodService {
         }
 
         paymentMethod.setName(normalizedNewName);
+        paymentMethod.setIcon(icon);
         return paymentMethodRepository.save(paymentMethod);
     }
 
@@ -69,7 +72,8 @@ public class PaymentMethodService {
                 .stream()
                 .map(paymentMethod -> new PaymentMethodResponseDTO(
                         paymentMethod.getId(),
-                        paymentMethod.getName()))
+                        paymentMethod.getName(),
+                        paymentMethod.getIcon()))
                 .toList();
     }
 }

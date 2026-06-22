@@ -10,6 +10,9 @@ public record UpdateCategoryRequestDTO (
 
     @NotBlank(message = "Type is required")
     @Size(max = 100, message = "Type must be at most 100 characters")
-    String type
+    String type,
+    
+    @NotBlank(message = "Icon is required")
+    String icon
 ){
 }

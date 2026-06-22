@@ -8,5 +8,7 @@ public record CreateCategoryRequestDTO(
 
         @NotBlank(message = "Name is required") @Size(max = 100, message = "Name must be at most 100 characters") String name,
 
-        @NotBlank(message = "Type is required") @Size(max = 100, message = "Type must be at most 100 characters") String type) {
+        @NotBlank(message = "Type is required") @Size(max = 100, message = "Type must be at most 100 characters") String type,
+        
+        @NotBlank(message = "Icon is required") String icon) {
 }
