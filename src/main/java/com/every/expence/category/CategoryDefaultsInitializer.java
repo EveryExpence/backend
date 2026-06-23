@@ -34,8 +34,9 @@ public class CategoryDefaultsInitializer implements ApplicationRunner {
     public void run(ApplicationArguments args){
         for(Category category : DEFAULT_CATEGORIES){
             try{
-                boolean exists = categoryRepository.existsByUserIdIsNullAndNameAndType(category.getName(), category.getType());
-                if(!exists) categoryRepository.save(category);
+                if(!categoryRepository.existsById(category.getId())) {
+                    categoryRepository.save(category);
+                }
             }catch(DuplicateKeyException ignored) {}
         }
     }

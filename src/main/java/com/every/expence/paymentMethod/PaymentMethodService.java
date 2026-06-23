@@ -28,7 +28,8 @@ public class PaymentMethodService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Payment method name already in use");
         }
 
-        PaymentMethod paymentMethod = new PaymentMethod(createPaymentMethodRequestDTO.id(), user.getId(), normalizedName, icon);
+        PaymentMethod paymentMethod = new PaymentMethod(createPaymentMethodRequestDTO.id(), user.getId(),
+                normalizedName, icon);
         return paymentMethodRepository.save(paymentMethod);
     }
 
@@ -45,7 +46,8 @@ public class PaymentMethodService {
         }
     }
 
-    public PaymentMethod updatePaymentMethodById(User user, String id, UpdatePaymentMethodRequestDTO updatePaymentMethodRequestDTO) {
+    public PaymentMethod updatePaymentMethodById(User user, String id,
+            UpdatePaymentMethodRequestDTO updatePaymentMethodRequestDTO) {
         String normalizedNewName = updatePaymentMethodRequestDTO.name().trim();
         String icon = updatePaymentMethodRequestDTO.icon();
 
@@ -53,7 +55,8 @@ public class PaymentMethodService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Payment method not found"));
 
         if (paymentMethod.getName().equals(normalizedNewName)) {
-            return paymentMethod;
+            paymentMethod.setIcon(icon);
+            return paymentMethodRepository.save(paymentMethod);
         }
 
         boolean nameTaken = paymentMethodRepository.existsByUserIdAndName(user.getId(), normalizedNewName);
