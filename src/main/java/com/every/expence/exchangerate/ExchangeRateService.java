@@ -31,9 +31,25 @@ public class ExchangeRateService {
             Map<String, Double> rates = null;
             
             if (response.containsKey("conversion_rates")) {
-                rates = (Map<String, Double>) response.get("conversion_rates");
+                Object ratesObj = response.get("conversion_rates");
+                if (ratesObj instanceof Map<?,?> map) {
+                    rates = new java.util.HashMap<>();
+                    for (Map.Entry<?,?> entry : map.entrySet()) {
+                        if (entry.getKey() instanceof String key && entry.getValue() instanceof Number num) {
+                            rates.put(key, num.doubleValue());
+                        }
+                    }
+                }
             } else if (response.containsKey("rates")) {
-                rates = (Map<String, Double>) response.get("rates");
+                Object ratesObj = response.get("rates");
+                if (ratesObj instanceof Map<?,?> map) {
+                    rates = new java.util.HashMap<>();
+                    for (Map.Entry<?,?> entry : map.entrySet()) {
+                        if (entry.getKey() instanceof String key && entry.getValue() instanceof Number num) {
+                            rates.put(key, num.doubleValue());
+                        }
+                    }
+                }
             }
             
             return new ExchangeRateResponseDTO(result, baseCode, rates);

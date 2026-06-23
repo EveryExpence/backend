@@ -26,11 +26,16 @@ public class PaymentMethodDefaultsInitializer implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) {
         for (PaymentMethod method : DEFAULT_METHODS) {
-            if (!paymentMethodRepository.existsByUserIdIsNullAndName(method.getName())) {
-                try {
-                    paymentMethodRepository.save(method);
-                } catch (DuplicateKeyException ignored) {
-                }
+            try {
+                paymentMethodRepository.findById(method.getId()).ifPresentOrElse(
+                        existing -> {
+                            if (existing.getIcon() == null || existing.getIcon().isBlank()) {
+                                existing.setIcon(method.getIcon());
+                                paymentMethodRepository.save(existing);
+                            }
+                        },
+                        () -> paymentMethodRepository.save(method));
+            } catch (DuplicateKeyException ignored) {
             }
         }
     }
