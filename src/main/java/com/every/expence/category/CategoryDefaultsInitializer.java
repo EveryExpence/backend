@@ -31,13 +31,19 @@ public class CategoryDefaultsInitializer implements ApplicationRunner {
     }
 
     @Override
-    public void run(ApplicationArguments args){
-        for(Category category : DEFAULT_CATEGORIES){
-            try{
-                if(!categoryRepository.existsById(category.getId())) {
-                    categoryRepository.save(category);
-                }
-            }catch(DuplicateKeyException ignored) {}
+    public void run(ApplicationArguments args) {
+        for (Category category : DEFAULT_CATEGORIES) {
+            try {
+                categoryRepository.findById(category.getId()).ifPresentOrElse(
+                        existing -> {
+                            if (existing.getIcon() == null || existing.getIcon().isBlank()) {
+                                existing.setIcon(category.getIcon());
+                                categoryRepository.save(existing);
+                            }
+                        },
+                        () -> categoryRepository.save(category));
+            } catch (DuplicateKeyException ignored) {
+            }
         }
     }
 }
